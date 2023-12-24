@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="facebook_app_id">1476716329737731</string>
+    <string name="fb_login_protocol_scheme">fb1476716329737731</string>
+    <string name="facebook_client_token">06683868e8cad1b90f6a916ff67e034c</string>
+    <string name="app_name_zoom_local" >creen</string> // Put your app name in here for notification.
+
+</resources>

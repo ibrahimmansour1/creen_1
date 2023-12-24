@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "28565525702",
+    "project_id": "creen-d9403",
+    "storage_bucket": "creen-d9403.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:28565525702:android:0b76d4e2206eebfed273c7",
+        "android_client_info": {
+          "package_name": "com.creen_program"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "28565525702-f86n3iq24lf9oanibrfabs9vgmpj0rtk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA-_O6UPQn0pFcuXrDaQbOhCPSZXFScZg8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "28565525702-f86n3iq24lf9oanibrfabs9vgmpj0rtk.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
