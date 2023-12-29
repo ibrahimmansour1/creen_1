@@ -18,6 +18,7 @@ import 'package:creen/features/subject/viewModel/blogs/blogs_cubit.dart';
 import 'package:creen/features/subject/viewModel/createBlogs/create_new_blogs_cubit.dart';
 import 'package:flutter/material.dart' hide NavigationDrawer;
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get_storage/get_storage.dart';
 
 import '../../../../core/utils/widgets/blogs_view.dart';
@@ -83,7 +84,8 @@ class _HomeScreenState extends State<HomeScreen> {
             tileMode: TileMode.clamp,
           ),
 */
-        image: DecorationImage(image: AssetImage(kAppLogog),fit: BoxFit.cover)
+        color: Colors.grey
+        // image: DecorationImage(image: AssetImage(kAppLogog),fit: BoxFit.cover)
         ),
         child: Scaffold(
           backgroundColor: Colors.transparent,
@@ -91,7 +93,7 @@ class _HomeScreenState extends State<HomeScreen> {
             visible: HelperFunctions.isLoggedIn,
             child: Padding(
               padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
-              child: FloatingActionButton(
+              child: FloatingActionButton.extended(
                 onPressed: () {
                   if (!HelperFunctions.validateLogin()) {
                     return;
@@ -114,11 +116,10 @@ class _HomeScreenState extends State<HomeScreen> {
                       isNamed: false);
                 },
                 backgroundColor: MainStyle.primaryColor,
-                child: const Icon(
-                  Icons.add,
-                  color: Colors.white,
-                  size: 40,
-                ),
+                label: const Text("انشاء منشور",style: TextStyle(
+                  color: Colors.white
+                ),),
+                icon: SvgPicture.asset("assets/images/post.svg",width: MediaQuery.of(context).size.height*.03,color: Colors.white,),
               ),
             ),
           ),
@@ -131,6 +132,7 @@ class _HomeScreenState extends State<HomeScreen> {
               back: false,
               title: null,
               main: true,
+              removeBottomBorderColor: true,
             ),
           ),
           body: BlogsView(

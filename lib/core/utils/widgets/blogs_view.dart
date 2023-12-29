@@ -36,110 +36,139 @@ class BlogsView extends StatelessWidget {
             color: Colors.white,
           );
         }
-        return RefreshIndicator(color: Colors.black,
+        return RefreshIndicator(
+          color: Colors.black,
           onRefresh: () => blogsCubit.getBlogs(
             context,
             isInit: true,
           ),
           child: SingleChildScrollView(
             child: Column(
-
               // direction: Axis.vertical,
               children: [
-                if(storiesCubit != null &&storiesCubit!.stories !=null &&storiesCubit!.stories.isNotEmpty && state is! StoriesLoading )
-                Container(
-                  width: Sizes.screenWidth(),
-                  height: Sizes.screenHeight()*0.3,
-                  color: Colors.white,
-                  alignment: Alignment.center,
-                  child: ListView.builder(itemBuilder: (context,index) {
+                if (storiesCubit != null &&
+                    storiesCubit!.stories != null &&
+                    storiesCubit!.stories.isNotEmpty &&
+                    state is! StoriesLoading)
+                  Container(
+                    width: Sizes.screenWidth(),
+                    height: Sizes.screenHeight() * 0.3,
+                    color: Colors.white,
+                    alignment: Alignment.center,
+                    child: ListView.builder(
+                      itemBuilder: (context, index) {
 // log('storiesCubit?.stories[index].story?[0].image ${storiesCubit?.stories[index].story?[0].image}');
 // log('storiesCubit!.stories[index].profile! ${storiesCubit!.stories[index].profile!}');
-log('index $index');
-log('length ${storiesCubit!.stories.length>=5?6:storiesCubit!.stories.length}');
-if(index <5) {
-  return InkWell(
-    onTap: (){
-      NavigationService.push(
-        page: BlocProvider.value(
-          value: storiesCubit!,
-          child: ViewStoryScreen(
-            initStoryPage: index,
-          ),
-        ),
-      );
-    },
-    child: Stack(
-      alignment: HelperFunctions.isArabic?Alignment.bottomRight:Alignment.bottomLeft,
-      children: [
-        if(storiesCubit!.stories.isNotEmpty && storiesCubit?.stories[index] != null)
-          Container(
-            width: Sizes.screenWidth()*0.31,
-            height: Sizes.screenHeight()*0.3,
-            margin: const EdgeInsets.symmetric(horizontal: 5,vertical: 10),
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(15),
-                image: DecorationImage(
-                    image: storiesCubit?.stories[index].story?[0].image !=null?NetworkImage(storiesCubit!.stories[index].story![0].image):const AssetImage('assets/images/playbutton.png')as ImageProvider<Object>,
-                    fit: BoxFit.cover,
-                )
-            ),
-          ),
-        if(storiesCubit!.stories.isNotEmpty)
-          Container(
-            width: 45,
-            height: 45,
-            margin: const EdgeInsets.all(18),
-            decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border:Border.all(color: Colors.primaries[ index >= 17 ? 0 : index + 1],width: 3.0),
-                image: DecorationImage(
-                  image:storiesCubit!.stories[index].profile != null? NetworkImage(storiesCubit!.stories[index].profile!):const AssetImage(personProfile)as ImageProvider<Object>,
-                  fit: BoxFit.cover,
-                )
-            ),
-          )
-      ],
-    ),
-  );
-} else {
-  return InkWell(
-    onTap: () {
-      NavigationService.push(
-        page: BlocProvider.value(
-            value: storiesCubit!,
-            child: const StoriesDetailsScreen()),
-      );
-    },
-    child: Padding(
-      padding:
-      EdgeInsets.symmetric(horizontal: 10.r),
-      child: Column(
-        mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            'more'.translate,
-            style: TextStyle(
-              color: const Color(0xFF3B9889),
-              fontSize: 20.r,
-            ),
-          ),
-          Icon(
-            Icons.more_horiz,
-            color: const Color(0xFF3B9889),
-            size: 20.r,
-          ),
-        ],
-      ),
-    ),
-  );
-
-}
-                  },padding: EdgeInsets.zero,  itemCount: storiesCubit!.stories.length>=5?6:storiesCubit!.stories.length,scrollDirection: Axis.horizontal,),
-                ),
+                        log('index $index');
+                        log('length ${storiesCubit!.stories.length >= 5 ? 6 : storiesCubit!.stories.length}');
+                        if (index < 5) {
+                          return InkWell(
+                            onTap: () {
+                              NavigationService.push(
+                                page: BlocProvider.value(
+                                  value: storiesCubit!,
+                                  child: ViewStoryScreen(
+                                    initStoryPage: index,
+                                  ),
+                                ),
+                              );
+                            },
+                            child: Stack(
+                              alignment: HelperFunctions.isArabic
+                                  ? Alignment.bottomRight
+                                  : Alignment.bottomLeft,
+                              children: [
+                                if (storiesCubit!.stories.isNotEmpty &&
+                                    storiesCubit?.stories[index] != null)
+                                  Container(
+                                    width: Sizes.screenWidth() * 0.31,
+                                    height: Sizes.screenHeight() * 0.3,
+                                    margin: const EdgeInsets.symmetric(
+                                        horizontal: 5, vertical: 10),
+                                    decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(15),
+                                        image: DecorationImage(
+                                          image: storiesCubit?.stories[index]
+                                                      .story?[0].image !=
+                                                  null
+                                              ? NetworkImage(storiesCubit!
+                                                  .stories[index]
+                                                  .story![0]
+                                                  .image)
+                                              : const AssetImage(
+                                                      'assets/images/playbutton.png')
+                                                  as ImageProvider<Object>,
+                                          fit: BoxFit.cover,
+                                        )),
+                                  ),
+                                if (storiesCubit!.stories.isNotEmpty)
+                                  Container(
+                                    width: 45,
+                                    height: 45,
+                                    margin: const EdgeInsets.all(18),
+                                    decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        border: Border.all(
+                                            color: Colors.primaries[
+                                                index >= 17 ? 0 : index + 1],
+                                            width: 3.0),
+                                        image: DecorationImage(
+                                          image: storiesCubit!
+                                                      .stories[index].profile !=
+                                                  null
+                                              ? NetworkImage(storiesCubit!
+                                                  .stories[index].profile!)
+                                              : const AssetImage(personProfile)
+                                                  as ImageProvider<Object>,
+                                          fit: BoxFit.cover,
+                                        )),
+                                  )
+                              ],
+                            ),
+                          );
+                        } else {
+                          return InkWell(
+                            onTap: () {
+                              NavigationService.push(
+                                page: BlocProvider.value(
+                                    value: storiesCubit!,
+                                    child: const StoriesDetailsScreen()),
+                              );
+                            },
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 10.r),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.max,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    'more'.translate,
+                                    style: TextStyle(
+                                      color: const Color(0xFF3B9889),
+                                      fontSize: 20.r,
+                                    ),
+                                  ),
+                                  Icon(
+                                    Icons.more_horiz,
+                                    color: const Color(0xFF3B9889),
+                                    size: 20.r,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        }
+                      },
+                      padding: EdgeInsets.zero,
+                      itemCount: storiesCubit!.stories.length >= 5
+                          ? 6
+                          : storiesCubit!.stories.length,
+                      scrollDirection: Axis.horizontal,
+                    ),
+                  ),
                 SizedBox(
-                  height: Sizes.screenHeight()/**0.84*/*blogsCubit.blogs.length,
+                  height:
+                      Sizes.screenHeight() /**0.84*/ * blogsCubit.blogs.length,
                   child: ListView.builder(
                     controller: blogsCubit.scrollController,
                     physics: const NeverScrollableScrollPhysics(),
@@ -149,11 +178,12 @@ if(index <5) {
                     itemBuilder: (context, i) {
                       var post = blogsCubit.blogs[i];
                       // log('post id ${post.id}');
-                      UpdateSeenBlogsRepo.updateSeen( blogId: post.id);
+                      UpdateSeenBlogsRepo.updateSeen(blogId: post.id);
                       return SubjectItem(
                         // key: ValueKey(post.id),
                         isFirstItem: i == 0,
-                        hasRetweeted: blogsCubit.isRetweetedBlog(postId: post.id),
+                        hasRetweeted:
+                            blogsCubit.isRetweetedBlog(postId: post.id),
                         publisherId: post.userId,
                         blogsCubit: blogsCubit,
                         postId: post.id,
@@ -180,7 +210,6 @@ if(index <5) {
     );
   }
 }
-
 
 /*
 const Icon(

@@ -27,11 +27,12 @@ class CustomizedReadMore extends StatelessWidget {
       trimCollapsedText: 'show_more'.translate,
       trimExpandedText: 'show_less'.translate,
       style: MainTheme.authTextStyle.copyWith(
-          color: txtColor, fontSize: 16.r, fontWeight: FontWeight.normal),
+          color: txtColor, fontSize: 16.r, fontWeight: FontWeight.normal,fontFamily: "Arial"),
       moreStyle: const TextStyle(
         fontSize: 14,
         fontWeight: FontWeight.bold,
-        color: Colors.blue,
+        color: Colors.grey,
+        fontFamily: "Cairo"
       ),
     );
   }

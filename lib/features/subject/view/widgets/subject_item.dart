@@ -31,6 +31,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../../../core/utils/widgets/customized_read_more.dart';
@@ -41,6 +43,7 @@ import '../../../follow/viewModel/follow/follow_cubit.dart';
 import '../../../follow/viewModel/followers/followers_cubit.dart';
 import '../../../market/viewModel/categories/categories_cubit.dart';
 import '../../model/blogs_model.dart';
+
 var english = RegExp(r'[a-zA-Z]');
 
 class SubjectItem extends StatefulWidget {
@@ -86,6 +89,7 @@ class SubjectItem extends StatefulWidget {
 
 class _SubjectItemState extends State<SubjectItem> {
   var controller = CarouselController();
+
   @override
   Widget build(BuildContext context) {
     if (widget.publisherId == widget.blogsCubit?.blogs.first.userId) {
@@ -93,14 +97,13 @@ class _SubjectItemState extends State<SubjectItem> {
       log('isMe=> ${widget.publisherId == HelperFunctions.currentUser?.id}');
     }
 
-
     int currentStep = 0;
     var retweets = widget.blogs?.retweets;
     var link = 'https://www.creen-program.com/blog/view/${widget.blogs?.id}';
     var length = widget.blogs?.images?.length ?? 0;
     int imagesLength =
         widget.blogs?.youtube?.isNotEmpty == true ? length + 1 : length;
-   // print("retweets?[0].user?.profile ${retweets?[0].user?.profile}");
+    // print("retweets?[0].user?.profile ${retweets?[0].user?.profile}");
     return Column(
       children: [
         Container(
@@ -109,10 +112,8 @@ class _SubjectItemState extends State<SubjectItem> {
           //height: Sizes.screenHeight() * 0.79,
           padding: const EdgeInsets.fromLTRB(0, 2, 0, 10),
           decoration: const BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.all(
-                Radius.circular(20),
-              )),
+            color: Colors.white,
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.start,
@@ -182,210 +183,235 @@ class _SubjectItemState extends State<SubjectItem> {
                 ),
               ],
            */
+              SizedBox(height: 5.h,),
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: 10.r),
+                padding: EdgeInsets.only(right: 10.r),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    InkWell(
-                      onTap: () {
-                        NavigationService.push(
-                          page: MultiBlocProvider(
-                            providers: [
-                              BlocProvider(
-                                create: (_) => FollowingCubit(
-                                  userId: widget.publisherId,
+                    Flexible(
+                      child: InkWell(
+                        onTap: () {
+                          NavigationService.push(
+                            page: MultiBlocProvider(
+                              providers: [
+                                BlocProvider(
+                                  create: (_) => FollowingCubit(
+                                    userId: widget.publisherId,
+                                  ),
                                 ),
-                              ),
-                              if (widget.blogsCubit != null)
-                                BlocProvider.value(
-                                  value: widget.blogsCubit!,
+                                if (widget.blogsCubit != null)
+                                  BlocProvider.value(
+                                    value: widget.blogsCubit!,
+                                  ),
+                                BlocProvider(
+                                  create: (_) => FollowersCubit(
+                                    userId: widget.publisherId,
+                                  ),
                                 ),
-                              BlocProvider(
-                                create: (_) => FollowersCubit(
-                                  userId: widget.publisherId,
+                                BlocProvider(
+                                  create: (_) => ProfileCubit(
+                                    userId: widget.publisherId,
+                                  ),
                                 ),
-                              ),
-                              BlocProvider(
-                                create: (_) => ProfileCubit(
-                                  userId: widget.publisherId,
+                              ],
+                              // child: const OthersProfileScreen(),
+                              child: const MyProfileScreen(),
+                            ),
+                            isNamed: false,
+                          );
+                        },
+                        child: Row(
+                          children: [
+                            CircleAvatar(
+                              radius: 25,
+                              backgroundColor: Colors.white,
+                              backgroundImage: widget.cookerImage != null
+                                  ? NetworkImage(
+                                      widget.cookerImage!,
+                                    )
+                                  : const AssetImage(personProfile)
+                                      as ImageProvider,
+                            ),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  widget.cookerName ?? '',
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: MainTheme.authTextStyle.copyWith(
+                                    fontSize: 14.r,
+                                    fontWeight: FontWeight.w700,
+                                  ),
                                 ),
-                              ),
-                            ],
-                            // child: const OthersProfileScreen(),
-                            child: const MyProfileScreen(),
-                          ),
-                          isNamed: false,
-                        );
-                      },
-                      child: Row(
-                        children: [
-                          CircleAvatar(
-                            radius: 25,
-                            backgroundColor: Colors.white,
-                            backgroundImage: widget.cookerImage != null
-                                ? NetworkImage(
-                                    widget.cookerImage!,
-                                  )
-                                : const AssetImage(personProfile)
-                                    as ImageProvider,
-                          ),
-                          const SizedBox(
-                            width: 10,
-                          ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                widget.cookerName ?? '',
-                                style: MainTheme.authTextStyle.copyWith(
-                                  fontSize: 14.r,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ),
-                              Text(
-                                widget.categoryName ?? '',
-                                style: const TextStyle(
-                                  color: Colors.red,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              )
-                            ],
-                          ),
-                        ],
+                                Text(
+                                  widget.categoryName ?? '',
+                                  style: const TextStyle(
+                                    color: Colors.red,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                )
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 10),
-                      child:
-                          widget.publisherId == HelperFunctions.currentUser?.id
-                              ? BlocBuilder<BlogsCubit, BlogsState>(
+                    widget.publisherId ==
+                            HelperFunctions.currentUser?.id
+                        ? BlocBuilder<BlogsCubit, BlogsState>(
+                            builder: (context, state) {
+                              if (state is DeleteBlogsLoading) {
+                                return const LoaderWidget();
+                              }
+                              return PopupMenuButton(
+                                onSelected: (v) {
+                                  if (v == 'delete') {
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) => AlertDialog(
+                                        title: Text(
+                                          'delete'.translate,
+                                        ),
+                                        content: Text(
+                                          'do_you_want_to_scan'.translate,
+                                        ),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () {
+                                              NavigationService.goBack();
+                                              widget.blogsCubit
+                                                  ?.deleteBlogsById(
+                                                context,
+                                                widget.postId,
+                                              );
+                                            },
+                                            child: Text(
+                                              'yes'.translate,
+                                              style: const TextStyle(
+                                                  color: Colors.black),
+                                            ),
+                                          ),
+                                          TextButton(
+                                            onPressed: () {
+                                              NavigationService.goBack();
+                                            },
+                                            child: Text(
+                                              'no'.translate,
+                                              style: const TextStyle(
+                                                  color: Colors.black),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  } else if (v == 'edit') {
+                                    NavigationService.push(
+                                        page: MultiBlocProvider(
+                                          providers: [
+                                            BlocProvider(
+                                              create: (_) =>
+                                                  CategoriesCubit(),
+                                            ),
+                                            BlocProvider.value(
+                                              value: widget.blogsCubit!,
+                                            ),
+                                            BlocProvider(
+                                              create: (context) =>
+                                                  CreateNewBlogsCubit(
+                                                      blog: widget.blogs),
+                                            ),
+                                          ],
+                                          child: const AddSubjectScreen(),
+                                        ),
+                                        isNamed: false);
+                                  }
+                                },
+                                itemBuilder: (_) => [
+                                  PopupMenuItem(
+                                    value: 'delete',
+                                    child: Text(
+                                      'delete'.translate,
+                                    ),
+                                  ),
+                                  PopupMenuItem(
+                                    value: 'edit',
+                                    child: Text(
+                                      'edit'.translate,
+                                    ),
+                                  ),
+                                ],
+                              );
+                            },
+                          )
+                        : Row(
+                            children: [
+                              // const StarIcon(),
+                              // InkWell(
+                              //     onTap: () {
+                              //       // print('cooker cooker name =====> ${widget.cookerName}');
+                              //       // print('cooker cooker name =====> ${widget.cookerImage}\n\n\n\n');
+                              //       if (!HelperFunctions.validateLogin()) {
+                              //         return;
+                              //       }
+                              //       NavigationService.push(
+                              //           page: AllMessagesScreen(
+                              //         allConversationsCubit:
+                              //             AllConversationsCubit(),
+                              //         recieverId: widget.publisherId,
+                              //         conversationId: null,
+                              //         userName: widget.cookerName,
+                              //         profilePic: widget.cookerImage,
+                              //         timeAgo: null,
+                              //       ));
+                              //     },
+                              //     child: SvgPicture.asset(
+                              //       "assets/images/chat.svg",
+                              //       width:
+                              //           MediaQuery.of(context).size.height *
+                              //               .035,
+                              //       color: Colors.black,
+                              //     )),
+                              // SizedBox(
+                              //   width: 10.w,
+                              // ),
+                              Visibility(
+                                visible: widget.blogs?.userId !=
+                                    HelperFunctions.currentUser?.id,
+                                child: BlocBuilder<FollowCubit, FollowState>(
                                   builder: (context, state) {
-                                    if (state is DeleteBlogsLoading) {
+                                    if (state is FollowLoading) {
                                       return const LoaderWidget();
                                     }
-                                    return PopupMenuButton(
-                                      onSelected: (v) {
-                                        if (v == 'delete') {
-                                          showDialog(
-                                            context: context,
-                                            builder: (context) => AlertDialog(
-                                              title: Text(
-                                                'delete'.translate,
-                                              ),
-                                              content: Text(
-                                                'do_you_want_to_scan'.translate,
-                                              ),
-                                              actions: [
-                                                TextButton(
-                                                  onPressed: () {
-                                                    NavigationService.goBack();
-                                                    widget.blogsCubit
-                                                        ?.deleteBlogsById(
-                                                      context,
-                                                      widget.postId,
-                                                    );
-                                                  },
-                                                  child: Text(
-                                                    'yes'.translate,
-                                                    style: const TextStyle(
-                                                        color: Colors.black),
-                                                  ),
-                                                ),
-                                                TextButton(
-                                                  onPressed: () {
-                                                    NavigationService.goBack();
-                                                  },
-                                                  child: Text(
-                                                    'no'.translate,
-                                                    style: const TextStyle(
-                                                        color: Colors.black),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          );
-                                        } else if (v == 'edit') {
-                                          NavigationService.push(
-                                              page: MultiBlocProvider(
-                                                providers: [
-                                                  BlocProvider(
-                                                    create: (_) =>
-                                                        CategoriesCubit(),
-                                                  ),
-                                                  BlocProvider.value(
-                                                    value: widget.blogsCubit!,
-                                                  ),
-                                                  BlocProvider(
-                                                    create: (context) =>
-                                                        CreateNewBlogsCubit(
-                                                            blog: widget.blogs),
-                                                  ),
-                                                ],
-                                                child: const AddSubjectScreen(),
-                                              ),
-                                              isNamed: false);
-                                        }
-                                      },
-                                      itemBuilder: (_) => [
-                                        PopupMenuItem(
-                                          value: 'delete',
-                                          child: Text(
-                                            'delete'.translate,
-                                          ),
-                                        ),
-                                        PopupMenuItem(
-                                          value: 'edit',
-                                          child: Text(
-                                            'edit'.translate,
-                                          ),
-                                        ),
-                                      ],
-                                    );
+                                    return FollowButton(
+                                        onPressed: () {
+                                          if (!HelperFunctions
+                                              .validateLogin()) {
+                                            return;
+                                          }
+                                          context.read<FollowCubit>().follow(
+                                                context,
+                                                userId: widget.publisherId,
+                                                isFollow: widget.isFollow,
+                                              );
+                                        },
+                                        isFollow: widget.isFollow);
                                   },
-                                )
-                              : Row(
-                                  children: [
-                                    const StarIcon(),                                    InkWell(
-                                      onTap: () {
-
-                                        // print('cooker cooker name =====> ${widget.cookerName}');
-                                        // print('cooker cooker name =====> ${widget.cookerImage}\n\n\n\n');
-                                        if (!HelperFunctions.validateLogin()) {
-                                          return;
-                                        }
-                                        NavigationService.push(
-                                            page: AllMessagesScreen(
-                                          allConversationsCubit:
-                                              AllConversationsCubit(),
-                                          recieverId: widget.publisherId,
-                                          conversationId: null,
-                                          userName: widget.cookerName,
-                                          profilePic: widget.cookerImage,
-                                          timeAgo: null,
-                                        ));
-                                      },
-                                      child: Image(
-                                        image: const AssetImage(
-                                            'assets/images/chat_icon.png'),
-                                        // color: Colors.black,
-                                        height: 27.r,
-                                        width: 27.r,
-                                      ),
-                                    ),
-                                    ReportAndBlockMenu(
-                                      reportTypeId: widget.blogs?.id,
-                                      reportType: ReportType.post,
-                                    ),
-                                  ],
                                 ),
-                    )
+                              ),
+                              ReportAndBlockMenu(
+                                reportTypeId: widget.blogs?.id,
+                                reportType: ReportType.post,
+                              ),
+                            ],
+                          )
                   ],
                 ),
               ),
-              const SizedBox(
-                height: 2,
-              ),
+              SizedBox(height: 5.h,),
               widget.blogs?.images?.isNotEmpty == true ||
                       widget.blogs?.youtube?.isNotEmpty == true
                   ? StatefulBuilder(builder: (context, setState) {
@@ -396,7 +422,7 @@ class _SubjectItemState extends State<SubjectItem> {
                               imagesLength,
                               (index) {
                                 // var singleImage = widget.blogs?.images?[index].url;
-                              // print("widget.blogs!.youtube! ${widget.blogs!.youtube!}");
+                                // print("widget.blogs!.youtube! ${widget.blogs!.youtube!}");
                                 return index == imagesLength - 1 &&
                                         widget.blogs?.youtube?.isNotEmpty ==
                                             true
@@ -412,17 +438,18 @@ class _SubjectItemState extends State<SubjectItem> {
                                     : InkWell(
                                         onTap: () {
                                           if (kDebugMode) {
-
-                                          // print("objectobjectobjectobjectobjectobjectobjectobjectobjectobjectobjectobjectobjectobjectobjectobjectobjectobjectobjectobjectobjectobjectobjectobjectobject");
+                                            // print("objectobjectobjectobjectobjectobjectobjectobjectobjectobjectobjectobjectobjectobjectobjectobjectobjectobjectobjectobjectobjectobjectobjectobjectobject");
                                             print("imagesLength $imagesLength");
                                           }
                                           showImageViewerPager(
                                             context,
                                             MultiImageProvider(
                                               List.generate(
-                                                widget.blogs?.youtube?.isNotEmpty ==
-                                                    true
-                                                    ?imagesLength-1:imagesLength,
+                                                widget.blogs?.youtube
+                                                            ?.isNotEmpty ==
+                                                        true
+                                                    ? imagesLength - 1
+                                                    : imagesLength,
                                                 (i) => networkImage(
                                                         url: widget
                                                                 .blogs
@@ -494,47 +521,77 @@ class _SubjectItemState extends State<SubjectItem> {
                       )),
               Padding(
                 // padding: const EdgeInsets.all(8.0),
-                padding: EdgeInsets.symmetric(horizontal: 10.r),
+                padding: widget.postTitle != null && widget.postDesc != null
+                    ? EdgeInsets.symmetric(horizontal: 10.r)
+                    : EdgeInsets.zero,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-
-                    Container(
-                        // alignment: Alignment.topRight,
-                      width: MediaQuery.of(context).size.width,
-                        padding: const EdgeInsets.fromLTRB(10, 10, 10, 5),
-                        child: Text(
-                          widget.postTitle ?? '',
-                          textDirection: (english.hasMatch(widget.postTitle??''))
-                              ? TextDirection.ltr
-                              : TextDirection.rtl,
-                          style: MainTheme.authTextStyle.copyWith(
-                            color: Colors.black,
-                            fontSize: 18.r,
-                          ),
-                        )),
-                    Padding(
-                      padding: const EdgeInsets.only(right: 10, left: 10),
-                      child: CustomizedReadMore(data: widget.postDesc),
-                    ),
+                    widget.postTitle != null
+                        ? Container(
+                            // alignment: Alignment.topRight,
+                            width: MediaQuery.of(context).size.width,
+                            padding: const EdgeInsets.fromLTRB(10, 10, 10, 5),
+                            child: Text(
+                              widget.postTitle ?? '',
+                              textDirection:
+                                  (english.hasMatch(widget.postTitle ?? ''))
+                                      ? TextDirection.ltr
+                                      : TextDirection.rtl,
+                              style: MainTheme.authTextStyle.copyWith(
+                                  color: Colors.black,
+                                  fontSize: 18.r,
+                                  fontFamily: "Cairo"),
+                            ))
+                        : SizedBox(),
+                    widget.postTitle != null
+                        ? Padding(
+                            padding: const EdgeInsets.only(right: 10, left: 10),
+                            child: CustomizedReadMore(data: widget.postDesc),
+                          )
+                        : SizedBox(),
                   ],
                 ),
               ),
               Padding(
-                padding: EdgeInsets.fromLTRB(15.r, 15, 15.r, 0),
+                padding: EdgeInsets.symmetric(horizontal: 15.r, vertical: 5.r),
+                // padding: EdgeInsets.fromLTRB(15.r, 10, 15.r, 0),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
+                    Row(
+                      children: [
+                        SvgPicture.asset(
+                          "assets/images/red_heart.svg",
+                          width: MediaQuery.of(context).size.height * .03,
+                        ),
+                        SizedBox(
+                          width: 5.w,
+                        ),
+                        widget.isLike
+                            ? Text(
+                                "انت و ${int.parse(widget.likeCount!) - 1} أخرون ")
+                            : Text(
+                                "${widget.likeCount}",
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold),
+                              ),
+                      ],
+                    ),
+                    const Spacer(),
                     Row(
                       children: [
                         Row(
                           children: [
-                            ImageIcon(
-                              const AssetImage(
-                                'assets/images/post_seen.png',
-                              ),
-                              color: Colors.black,
-                              size: 23.r,
+                            Row(
+                              children: [
+                                SvgPicture.asset(
+                                  "assets/images/eye.svg",
+                                  width:
+                                      MediaQuery.of(context).size.height * .03,
+                                  color: Colors.grey[600],
+                                ),
+                              ],
                             ),
                             // const Icon(
                             //   Icons.visibility,
@@ -546,11 +603,11 @@ class _SubjectItemState extends State<SubjectItem> {
                             Text(
                               '${widget.blogs?.seen ?? 0}',
                               style:
-                              const TextStyle(fontWeight: FontWeight.bold),
+                                  const TextStyle(fontWeight: FontWeight.bold),
                             )
                           ],
                         ),
-                        if (retweets?.isNotEmpty == true ) ...[
+                        if (retweets?.isNotEmpty == true) ...[
                           Padding(
                             padding: EdgeInsets.symmetric(
                               horizontal: 25.r,
@@ -561,33 +618,45 @@ class _SubjectItemState extends State<SubjectItem> {
                               child: Stack(
                                 clipBehavior: Clip.none,
                                 children: [
-                                  retweets?[0].user?.profile == null?const CircleAvatar(
-                                    backgroundImage: AssetImage('assets/images/person_perview.png'),
-                                  ):
-                                  CircleRetweetImage(
-                                    image: retweets?[0].user?.profile ,
-                                  ),
+                                  retweets?[0].user?.profile == null
+                                      ? const CircleAvatar(
+                                          backgroundImage: AssetImage(
+                                              'assets/images/person_perview.png'),
+                                        )
+                                      : CircleRetweetImage(
+                                          image: retweets?[0].user?.profile,
+                                        ),
                                   (retweets?.length ?? 0) >= 2
-                                      ? (retweets?[1].user?.profile == null?const CircleAvatar(
-                                    backgroundImage: AssetImage('assets/images/person_perview.png'),
-                                  ):Positioned(
-                                    left: -14.r,
-                                    child: CircleRetweetImage(
-                                      image: retweets?[1].user?.profile ??
-                                          '',
-                                    ),
-                                  ))
+                                      ? (retweets?[1].user?.profile == null
+                                          ? const CircleAvatar(
+                                              backgroundImage: AssetImage(
+                                                  'assets/images/person_perview.png'),
+                                            )
+                                          : Positioned(
+                                              left: -14.r,
+                                              child: CircleRetweetImage(
+                                                image: retweets?[1]
+                                                        .user
+                                                        ?.profile ??
+                                                    '',
+                                              ),
+                                            ))
                                       : const BoxHelper(),
                                   (retweets?.length ?? 0) >= 3
-                                      ? (retweets?[2].user?.profile == null?const CircleAvatar(
-                                    backgroundImage: AssetImage('assets/images/person_perview.png'),
-                                  ):Positioned(
-                                    left: -25.r,
-                                    child: CircleRetweetImage(
-                                      image: retweets?[2].user?.profile ??
-                                          '',
-                                    ),
-                                  ))
+                                      ? (retweets?[2].user?.profile == null
+                                          ? const CircleAvatar(
+                                              backgroundImage: AssetImage(
+                                                  'assets/images/person_perview.png'),
+                                            )
+                                          : Positioned(
+                                              left: -25.r,
+                                              child: CircleRetweetImage(
+                                                image: retweets?[2]
+                                                        .user
+                                                        ?.profile ??
+                                                    '',
+                                              ),
+                                            ))
                                       : const BoxHelper(),
                                 ],
                               ),
@@ -596,33 +665,29 @@ class _SubjectItemState extends State<SubjectItem> {
                         ],
                       ],
                     ),
-                    Visibility(
-                      visible: widget.blogs?.userId !=
-                          HelperFunctions.currentUser?.id,
-                      child: BlocBuilder<FollowCubit, FollowState>(
-                        builder: (context, state) {
-                          if (state is FollowLoading) {
-                            return const LoaderWidget();
-                          }
-                          return FollowButton(
-                              onPressed: () {
-                                if (!HelperFunctions.validateLogin()) {
-                                  return;
-                                }
-                                context.read<FollowCubit>().follow(
-                                  context,
-                                  userId: widget.publisherId,
-                                  isFollow: widget.isFollow,
-                                );
-                              },
-                              isFollow: widget.isFollow);
-                        },
-                      ),
+                    SizedBox(
+                      width: 10.w,
+                    ),
+                    Row(
+                      children: [
+                        SvgPicture.asset(
+                          "assets/images/chat.svg",
+                          width: MediaQuery.of(context).size.height * .03,
+                          color: Colors.grey[600],
+                        ),
+                        SizedBox(
+                          width: 5.w,
+                        ),
+                        Text(
+                          "${widget.blogs?.comments?.length}",
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ],
                     ),
                   ],
                 ),
               ),
-              // const BoxHelper(height: 10,),
+              const Divider(),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 15.r),
                 // padding: EdgeInsets.fromLTRB(15.r, 10, 15.r, 0),
@@ -634,190 +699,228 @@ class _SubjectItemState extends State<SubjectItem> {
                     //   thickness: 1,
                     // ),
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Row(
-                          children: [
-                            CustomizedReactColumn(
-                              count: widget.likeCount ?? '0',
-                              reactWidget: InkWell(
-                                onTap: () {
-                                  if (!HelperFunctions.validateLogin()) {
-                                    return;
-                                  }
-                                  widget.blogsCubit?.addLikeToPost(
-                                    context,
-                                    postId: widget.postId,
-                                  );
-                                },
-                                child: Icon(
-                                  widget.isLike
-                                      ? Icons.favorite
-                                      : Icons.favorite_border,
-                                  size: 30,
-                                  color: widget.isLike
-                                      ? Colors.red
-                                      : Colors.black54,
-                                ),
-                              ),
-                            ),
-                            const BoxHelper(
-                              width: 30,
-                            ),
-                            BlocBuilder<BlogsCubit, BlogsState>(
-                              builder: (context, state) {
-                                return CustomizedReactColumn(
-                                  count:
-                                      '${widget.blogs?.retweets?.length ?? 0}',
-                                  reactWidget: InkWell(
-                                    onTap: state ==
-                                            RetweetBlogsLoading(
-                                                blogsId: widget.blogs?.id ?? 0)
-                                        ? null
-                                        : () {
-                                            if (!HelperFunctions.validateLogin()) {
-                                              return;
-                                            }
-                                            if (widget.blogsCubit == null ||
-                                                widget.hasRetweeted) {
-                                              return;
-                                            }
-                                            if (kDebugMode) {
-                                              print("widget.blogs?.id ${widget.blogs?.id}");
-                                            }
-                                            widget.blogsCubit?.retweetBlogsById(
-                                                context, widget.blogs?.id);
-                                          },
-                                    child: Icon(
-                                      Icons.sync,
-                                      size: 30,
-                                      color: widget.hasRetweeted
-                                          ? Colors.green
-                                          : Colors.black54,
-                                    ),
-                                  ),
-                                );
-                              },
-                            ),
-                          ],
-                        ),
-                        CustomizedReactColumn(
-                          count: '${widget.blogs?.comments?.length ?? 0}',
-                          reactWidget: InkWell(
-                            child: const Icon(
-                              Icons.mode_comment_outlined,
-                              size: 30,
-                              color: Colors.black54,
-                            ),
-                            onTap: () {
-                              if (widget.blogsCubit == null) {
-                                return;
-                              }
-                              if (!HelperFunctions.validateLogin()) {
-                                return;
-                              }
-                              var isFromBlogDetails =
-                                  ModalRoute.of(context)?.settings.name ==
-                                      RoutePaths.blogDetails;
-                              showModalBottomSheet(
-                                backgroundColor: Colors.transparent,
-                                context: context,
-                                builder: (_) => MultiBlocProvider(
-                                  providers: [
-                                    if (widget.blogsCubit != null)
-                                      BlocProvider<BlogsCubit>.value(
-                                        value: widget.blogsCubit!,
-                                      ),
-                                    if (isFromBlogDetails) ...[
-                                      BlocProvider<BlogDetailsCubit>.value(
-                                        value: context.read<BlogDetailsCubit>(),
-                                      ),
-                                    ],
-                                    BlocProvider(
-                                      create: (context) =>
-                                          AddCommentToPostCubit(),
-                                    ),
-                                  ],
-                                  child: CommentsScreen(
-                                    blogsId: widget.postId ?? 0,
-                                  ),
-                                ),
-                              );
-                              // NavigationService.push(
-                              //     page: MultiBlocProvider(
-                              //       providers: [
-                              //         if (blogsCubit != null)
-                              //           BlocProvider<BlogsCubit>.value(
-                              //             value: blogsCubit!,
-                              //           ),
-                              //         BlocProvider(
-                              //           create: (context) =>
-                              //               AddCommentToPostCubit(),
-                              //         ),
-                              //       ],
-                              //       child: CommentsScreen(
-                              //         blogsId: postId ?? 0,
-                              //       ),
-                              //     ),
-                              //     isNamed: false);
-                            },
-                          ),
-                        ),
-                        Row(
-                          children: [
-                            InkWell(
-                              onTap: () {
-                                Share.share(
-                                  link,
-                                );
-                              },
-                              child: const CustomizedReactColumn(
-                                count: '0',
-                                reactWidget: InkWell(
-                                  child: SizedBox(
-                                    height: 30,
-                                    width: 30,
-                                    child: Icon(
-                                      Icons.share_outlined,
-                                      color: Colors.black54,
-                                      size: 30,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            SizedBox(
-                              width: 30.r,
-                            ),
-                            InkWell(
+                        Expanded(
+                          child: CustomizedReactColumn(
+                            reactWidget: InkWell(
                               onTap: () {
                                 if (!HelperFunctions.validateLogin()) {
                                   return;
                                 }
-                                NavigationService.push(
-                                  page: AllConversationsScreen(
-                                    link: link,
-                                  ),
+                                widget.blogsCubit?.addLikeToPost(
+                                  context,
+                                  postId: widget.postId,
                                 );
                               },
-                              child:  CustomizedReactColumn(
-                                count: '0',
-                                reactWidget: InkWell(
-                                  child: MirrorWidget(
-                                    mirror: HelperFunctions.currentLanguage=='en'?false:true,
-                                    child: const SizedBox(
-                                        height: 30,
-                                        width: 30,
-                                        child: Image(
-                                          image: AssetImage(
-                                              'assets/images/share.jpeg'),
-                                        )),
+                              child: Column(
+                                children: [
+                                  SvgPicture.asset(
+                                    widget.isLike
+                                        ? "assets/images/red_heart.svg"
+                                        : "assets/images/heart.svg",
+                                    width: MediaQuery.of(context).size.height *
+                                        .03,
+                                    color:
+                                        widget.isLike ? null : Colors.grey[600],
                                   ),
-
+                                  SizedBox(
+                                    height: 3.h,
+                                  ),
+                                  Text("أعجبني")
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: CustomizedReactColumn(
+                            reactWidget: InkWell(
+                              child: Column(
+                                children: [
+                                  SvgPicture.asset(
+                                    "assets/images/chat.svg",
+                                    width: MediaQuery.of(context).size.height *
+                                        .03,
+                                    color: Colors.grey[600],
+                                  ),
+                                  SizedBox(
+                                    height: 3.h,
+                                  ),
+                                  Text("تعليق")
+                                ],
+                              ),
+                              onTap: () {
+                                if (widget.blogsCubit == null) {
+                                  return;
+                                }
+                                if (!HelperFunctions.validateLogin()) {
+                                  return;
+                                }
+                                var isFromBlogDetails =
+                                    ModalRoute.of(context)?.settings.name ==
+                                        RoutePaths.blogDetails;
+                                showModalBottomSheet(
+                                  backgroundColor: Colors.transparent,
+                                  context: context,
+                                  builder: (_) => MultiBlocProvider(
+                                    providers: [
+                                      if (widget.blogsCubit != null)
+                                        BlocProvider<BlogsCubit>.value(
+                                          value: widget.blogsCubit!,
+                                        ),
+                                      if (isFromBlogDetails) ...[
+                                        BlocProvider<BlogDetailsCubit>.value(
+                                          value:
+                                              context.read<BlogDetailsCubit>(),
+                                        ),
+                                      ],
+                                      BlocProvider(
+                                        create: (context) =>
+                                            AddCommentToPostCubit(),
+                                      ),
+                                    ],
+                                    child: CommentsScreen(
+                                      blogsId: widget.postId ?? 0,
+                                    ),
+                                  ),
+                                );
+                                // NavigationService.push(
+                                //     page: MultiBlocProvider(
+                                //       providers: [
+                                //         if (blogsCubit != null)
+                                //           BlocProvider<BlogsCubit>.value(
+                                //             value: blogsCubit!,
+                                //           ),
+                                //         BlocProvider(
+                                //           create: (context) =>
+                                //               AddCommentToPostCubit(),
+                                //         ),
+                                //       ],
+                                //       child: CommentsScreen(
+                                //         blogsId: postId ?? 0,
+                                //       ),
+                                //     ),
+                                //     isNamed: false);
+                              },
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: InkWell(
+                            onTap: () {
+                              Share.share(
+                                link,
+                              );
+                            },
+                            child: CustomizedReactColumn(
+                              reactWidget: InkWell(
+                                child: SizedBox(
+                                  child: Column(
+                                    children: [
+                                      SvgPicture.asset(
+                                        "assets/images/share-f.svg",
+                                        width:
+                                            MediaQuery.of(context).size.height *
+                                                .03,
+                                        color: Colors.grey[600],
+                                      ),
+                                      SizedBox(
+                                        height: 3.h,
+                                      ),
+                                      Text("مشاركة")
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),
-                          ],
+                          ),
+                        ),
+                        Expanded(
+                          child: BlocBuilder<BlogsCubit, BlogsState>(
+                            builder: (context, state) {
+                              return CustomizedReactColumn(
+                                reactWidget: InkWell(
+                                  onTap: state ==
+                                          RetweetBlogsLoading(
+                                              blogsId: widget.blogs?.id ?? 0)
+                                      ? null
+                                      : () {
+                                          if (!HelperFunctions
+                                              .validateLogin()) {
+                                            return;
+                                          }
+                                          if (widget.blogsCubit == null ||
+                                              widget.hasRetweeted) {
+                                            return;
+                                          }
+                                          if (kDebugMode) {
+                                            print(
+                                                "widget.blogs?.id ${widget.blogs?.id}");
+                                          }
+                                          widget.blogsCubit?.retweetBlogsById(
+                                              context, widget.blogs?.id);
+                                        },
+                                  child: Column(
+                                    children: [
+                                      SvgPicture.asset(
+                                        "assets/images/sync.svg",
+                                        width:
+                                            MediaQuery.of(context).size.height *
+                                                .03,
+                                        color: widget.hasRetweeted
+                                            ? Colors.green
+                                            : Colors.grey[600],
+                                      ),
+                                      SizedBox(
+                                        height: 3.h,
+                                      ),
+                                      Text("اعادة النشر")
+                                    ],
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                        Expanded(
+                          child: InkWell(
+                            onTap: () {
+                              if (!HelperFunctions.validateLogin()) {
+                                return;
+                              }
+                              NavigationService.push(
+                                page: AllConversationsScreen(
+                                  link: link,
+                                ),
+                              );
+                            },
+                            child: CustomizedReactColumn(
+                              reactWidget: InkWell(
+                                child: MirrorWidget(
+                                  mirror:
+                                      HelperFunctions.currentLanguage == 'ar'
+                                          ? false
+                                          : true,
+                                  child: Column(
+                                    children: [
+                                      SvgPicture.asset(
+                                        "assets/images/share.svg",
+                                        width:
+                                            MediaQuery.of(context).size.height *
+                                                .03,
+                                        color: Colors.grey[600],
+                                      ),
+                                      SizedBox(
+                                        height: 3.h,
+                                      ),
+                                      Text("المحادثات")
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
                         ),
                       ],
                     ),
@@ -827,7 +930,10 @@ class _SubjectItemState extends State<SubjectItem> {
             ],
           ),
         ),
-        Visibility(visible: widget.showAd, child:  BannerAdWidget(),),
+        Visibility(
+          visible: widget.showAd,
+          child: BannerAdWidget(),
+        ),
       ],
     );
   }
@@ -850,7 +956,8 @@ class CircleRetweetImage extends StatelessWidget {
   Widget build(BuildContext context) {
     return ClipOval(
       child: Image.network(
-        image ?? 'https://i.guim.co.uk/img/media/26392d05302e02f7bf4eb143bb84c8097d09144b/446_167_3683_2210/master/3683.jpg?width=1200&quality=85&auto=format&fit=max&s=a52bbe202f57ac0f5ff7f47166906403',
+        image ??
+            'https://i.guim.co.uk/img/media/26392d05302e02f7bf4eb143bb84c8097d09144b/446_167_3683_2210/master/3683.jpg?width=1200&quality=85&auto=format&fit=max&s=a52bbe202f57ac0f5ff7f47166906403',
         height: 20.r,
         width: 20.r,
       ),
@@ -861,23 +968,16 @@ class CircleRetweetImage extends StatelessWidget {
 class CustomizedReactColumn extends StatelessWidget {
   const CustomizedReactColumn({
     Key? key,
-    required this.count,
+    this.count,
     required this.reactWidget,
   }) : super(key: key);
-  final String count;
+  final String? count;
   final Widget reactWidget;
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Text(
-          count,
-          style: const TextStyle(fontWeight: FontWeight.w700),
-        ),
-        const BoxHelper(
-          height: 2,
-        ),
         reactWidget,
       ],
     );

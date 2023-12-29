@@ -32,7 +32,7 @@ class ReportAndBlockMenu extends StatelessWidget {
   Widget build(BuildContext context) {
     return PopupMenuButton(
       icon: Icon(
-        Icons.more_vert,
+        Icons.more_horiz,
         color: iconColor,
       ),
       onSelected: (value) {

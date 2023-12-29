@@ -23,19 +23,16 @@ class ImageItemWidget extends StatelessWidget {
   }
 
   Widget _buildImageWidget(
-      BuildContext context,
-      AssetEntity entity,
-      ThumbnailOption option,
-      ) {
+    BuildContext context,
+    AssetEntity entity,
+    ThumbnailOption option,
+  ) {
     return Stack(
       children: <Widget>[
         Positioned.fill(
-          child: AssetEntityImage(
-            entity,
-            isOriginal: false,
-            thumbnailSize: option.size,
-            thumbnailFormat: option.format,
-            fit: BoxFit.cover,
+          child: ImageItemWidget(
+            entity: entity,
+            option: option,
           ),
         ),
         PositionedDirectional(
@@ -85,7 +82,7 @@ class ImageItemWidget extends StatelessWidget {
                         ),
                       ),
                     Icon(
-                          () {
+                      () {
                         switch (entity.type) {
                           case AssetType.other:
                             return Icons.abc;

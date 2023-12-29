@@ -114,7 +114,7 @@ class MainPage extends ConsumerWidget {
         floatingActionButton: bottomNavIndex != 1||(liveIndex==0&&bottomNavIndex==2)
             ? const SizedBox()
             : BottomAppBar(
-                color: Colors.transparent,
+               padding: EdgeInsets.zero,
                 child: CustomBottomNavigationbBar(
                   onTap: (v) {
                     ref.read(_bottomNavIndexProvider.state).state = v;
@@ -147,7 +147,7 @@ class MainPage extends ConsumerWidget {
         bottomNavigationBar: bottomNavIndex == 1||(liveIndex==1&&bottomNavIndex == 2)
             ? const SizedBox()
             : BottomAppBar(
-                color: Colors.transparent,
+                padding: EdgeInsets.zero,
                 child: CustomBottomNavigationbBar(
                   onTap: (v) {
                     ref.read(_bottomNavIndexProvider.state).state = v;

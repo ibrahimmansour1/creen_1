@@ -14,6 +14,7 @@ import 'package:creen/features/notifications/viewModel/notifications/notificatio
 import 'package:flutter/material.dart' hide Badge;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../features/ads/viewModel/ads/ads_cubit.dart';
 import '../../themes/themes.dart';
@@ -63,6 +64,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
           ? TextDirection.ltr
           : TextDirection.rtl,
       child: Container(
+        height: Sizes.screenHeight() * 0.15,
           decoration: BoxDecoration(
             border: widget.removeBottomBorderColor
                 ? const Border()
@@ -77,148 +79,168 @@ class _CustomAppBarState extends State<CustomAppBar> {
             //     tileMode: TileMode.clamp),
           ),
           child: widget.back == false
-              ? AppBar(
-            backgroundColor: Colors.transparent,
-            bottom: widget.bottom,
-            centerTitle: widget.centerTitle,
-            toolbarHeight: Sizes.screenHeight() * 0.3,
-            title: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              ? Column(
+                children: [
+                  AppBar(
+
+                              backgroundColor: Colors.black,
+                              bottom: widget.bottom,
+                              centerTitle: widget.centerTitle,
+
+                              title: Column(
                   children: [
                     Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        IconButton(
-                          onPressed: () =>
-                              Scaffold.of(context).openDrawer(),
-                          icon: const Icon(
-                            Icons.menu,
-                            color: Colors.white,
-                          ),
-                        ),
-                        const BoxHelper(
-                          width: 15,
-                        ),
-                        IconButton(
-                          onPressed: () {
-                            if (!HelperFunctions.validateLogin()) {
-                              return;
-                            }
-                            NavigationService.push(
-                                page: const NotificationScreen(),
-                                isNamed: false);
-                          },
-                          icon: Badge(
-                            badgeStyle: BadgeStyle(
-                              padding: EdgeInsets.all(1.4.r),
-                              shape: BadgeShape.instagram,
+                        Row(
+                          children: [
+                            IconButton(
+                              onPressed: () =>
+                                  Scaffold.of(context).openDrawer(),
+                              icon: SvgPicture.asset(
+                                        "assets/images/menu.svg",
+                                        width: MediaQuery.of(context).size.height *
+                                            .035,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                            const BoxHelper(
+                              width: 15,
                             ),
-                            position:
-                            BadgePosition.topEnd(end: -5.r, top: 1.r),
-                            badgeContent: Text(
-                              '${notificationsCubit.notificationsCount}',
-                              style: const TextStyle(
-                                color: Colors.white,
+                            IconButton(
+                              onPressed: () {
+                                if (!HelperFunctions.validateLogin()) {
+                                  return;
+                                }
+                                NavigationService.push(
+                                    page: const NotificationScreen(),
+                                    isNamed: false);
+                              },
+                              icon: Badge(
+                                badgeStyle: BadgeStyle(
+                                  padding: EdgeInsets.all(1.4.r),
+                                  shape: BadgeShape.instagram,
+                                ),
+                                position:
+                                BadgePosition.topEnd(end: -5.r, top: 1.r),
+                                badgeContent: Text(
+                                  '${notificationsCubit.notificationsCount}',
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                showBadge:
+                                notificationsCubit.notificationsCount > 0,
+                                child: SvgPicture.asset(
+                                  "assets/images/bell.svg",
+                                  width: MediaQuery.of(context).size.height *
+                                      .035,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              iconSize: 32.r,
+                            ),
+                          ],
+                        ),
+                        widget.title == null
+                            ? Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.only(
+                                top: 4.r,
+                                left: HelperFunctions.currentLanguage ==
+                                    'ar'
+                                    ? 4.r
+                                    : 0,
+                                right:
+                                HelperFunctions.currentLanguage !=
+                                    'ar'
+                                    ? 4.r
+                                    : 0,
+                              ),
+                              child: Image.asset(
+                                'assets/images/logoo.png',
+                                height: 70.r,
+                                fit: BoxFit.cover,
                               ),
                             ),
-                            showBadge:
-                            notificationsCubit.notificationsCount > 0,
-                            child: const Icon(
-                              Icons.notifications,
-                              color: Colors.white,
+                          ],
+                        )
+                            : Text(
+                          widget.title!.translate,
+                          style: MainTheme.appBarTextStyle,
+                        ),
+                        Row(
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 10.r),
+                              child: InkWell(
+                                onTap: () {
+                                  if (!HelperFunctions.validateLogin()) {
+                                    return;
+                                  }
+                                  NavigationService.push(
+                                    page: const AllConversationsScreen(),
+                                    isNamed: false,
+                                  );
+                                },
+                                child: SvgPicture.asset(
+                                  "assets/images/chat.svg",
+                                  width: MediaQuery.of(context).size.height *
+                                      .035,
+                                  color: Colors.white,
+                                ),
+                              ),
                             ),
-                          ),
-                          iconSize: 32.r,
+                            const BoxHelper(
+                              width: 25,
+                            ),
+                            InkWell(
+                                onTap: () {
+                                  // HelperFunctions.showComingSoonDialog(context);
+                                  // return;
+                                  if (!HelperFunctions.validateLogin()) {
+                                    return;
+                                  }
+                                  NavigationService.push(
+                                    page: BlocProvider(
+                                        create: (context) => AllAdsCubit(),
+                                        child: const AdsScreen()),
+                                    isNamed: false,
+                                  );
+                                },
+                                child: SvgPicture.asset(
+                                  "assets/images/announcement.svg",
+                                  width: MediaQuery.of(context).size.height *
+                                      .035,
+                                  color: Colors.white,
+                                ),),
+                          ].reversed.toList(),
                         ),
                       ],
                     ),
-                    widget.title == null
-                        ? Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.only(
-                            top: 4.r,
-                            left: HelperFunctions.currentLanguage ==
-                                'ar'
-                                ? 4.r
-                                : 0,
-                            right:
-                            HelperFunctions.currentLanguage !=
-                                'ar'
-                                ? 4.r
-                                : 0,
-                          ),
-                          child: Image.asset(
-                            'assets/images/logoo.png',
-                            height: 70.r,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      ],
-                    )
-                        : Text(
-                      widget.title!.translate,
-                      style: MainTheme.appBarTextStyle,
-                    ),
-                    Row(
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 10.r),
-                          child: InkWell(
-                            onTap: () {
-                              if (!HelperFunctions.validateLogin()) {
-                                return;
-                              }
-                              NavigationService.push(
-                                page: const AllConversationsScreen(),
-                                isNamed: false,
-                              );
-                            },
-                            child: Image(
-                              image: const AssetImage(
-                                  'assets/images/chat_icon.png'),
-                              color: Colors.white,
-                              height: 27.r,
-                              width: 27.r,
-                            ),
-                          ),
-                        ),
-                        const BoxHelper(
-                          width: 25,
-                        ),
-                        InkWell(
-                            onTap: () {
-                              // HelperFunctions.showComingSoonDialog(context);
-                              // return;
-                              if (!HelperFunctions.validateLogin()) {
-                                return;
-                              }
-                              NavigationService.push(
-                                page: BlocProvider(
-                                    create: (context) => AllAdsCubit(),
-                                    child: const AdsScreen()),
-                                isNamed: false,
-                              );
-                            },
-                            child: const ImageIcon(
-                              AssetImage('assets/images/4.png'),
-                              color: Colors.white,
-                            )),
-                      ].reversed.toList(),
-                    ),
-                  ],
-                ),
-                if(StoriesCubit() != null && widget.main) StoryScreenUI(
-                  storiesCubit: storiesCubit!,
-                ),
 
-              ],
-            ),
-            leading: const SizedBox(),
-            leadingWidth: 0,
-          )
+                  ],
+                              ),
+                              leading: const SizedBox(),
+                              leadingWidth: 0,
+                            ),
+                  // if(StoriesCubit() != null && widget.main) Expanded(
+                  //   child: Padding(
+                  //     padding: EdgeInsets.symmetric(horizontal:15.r),
+                  //     child: Column(
+                  //       mainAxisAlignment: MainAxisAlignment.center,
+                  //       children: [
+                  //         StoryScreenUI(
+                  //           storiesCubit: storiesCubit!,
+                  //         ),
+                  //       ],
+                  //     ),
+                  //   ),
+                  // ),
+                ],
+              )
               : AppBar(
             backgroundColor: Colors.transparent,
             centerTitle: widget.centerTitle,

@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:camera/camera.dart';
+import 'package:creen/features/cam/image_item_widget.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -25,23 +26,34 @@ class TakePicView extends StatefulWidget {
 class _TakePicViewState extends State<TakePicView> {
   late CameraController controller;
   XFile? imageFile;
-  List<File>? files =[];
+  List<File>? files = [];
   List<bool> selectedIndex = [];
   FlashMode flashMode = FlashMode.off;
-bool videoRecording = false;
-  int  flashIndex = 0;
+  bool videoRecording = false;
+  int flashIndex = 0;
 
   bool isFront = false;
+
   Widget getIconByPlatform() {
     if (kIsWeb) {
-      return const Icon(Icons.flip_camera_android, color: Colors.white,);
+      return const Icon(
+        Icons.flip_camera_android,
+        color: Colors.white,
+      );
     }
     if (Platform.isAndroid) {
-      return const Icon(Icons.flip_camera_android, color: Colors.white,);
+      return const Icon(
+        Icons.flip_camera_android,
+        color: Colors.white,
+      );
     } else {
-      return const Icon(Icons.flip_camera_ios, color: Colors.white,);
+      return const Icon(
+        Icons.flip_camera_ios,
+        color: Colors.white,
+      );
     }
   }
+
   IconData get flashModeIcon {
     switch (flashMode) {
       case FlashMode.always:
@@ -74,7 +86,7 @@ bool videoRecording = false;
     // Navigator.pop(context, controller.selectedImages);
   }
 
- late CameraNotifier      cont = CameraNotifier(
+  late CameraNotifier cont = CameraNotifier(
     flashModes: FlashMode.values,
     service: CameraServiceImpl(),
     onPath: (path) => onFileFunction(File(path)),
@@ -82,7 +94,6 @@ bool videoRecording = false;
     enableAudio: false,
     mode: CameraMode.ratio16s9,
   );
-
 
   final FilterOptionGroup _filterOptionGroup = FilterOptionGroup(
     imageOption: const FilterOption(
@@ -215,7 +226,6 @@ bool videoRecording = false;
                 // mainAxisAlignment: MainAxisAlignment.end,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-
                   Align(
                     alignment: Alignment.bottomLeft,
                     child: Padding(
@@ -223,7 +233,7 @@ bool videoRecording = false;
                       child: CircleAvatar(
                         radius: 20,
                         backgroundColor: Colors.black.withOpacity(0.6),
-                        child:                   IconButton(
+                        child: IconButton(
                           color: Colors.white,
                           onPressed: (() {
                             files = [];
@@ -231,7 +241,6 @@ bool videoRecording = false;
                           }),
                           icon: const Icon(Icons.close),
                         ),
-
                       ),
                     ),
                   ),
@@ -245,9 +254,9 @@ bool videoRecording = false;
                         child: IconButton(
                           onPressed: () {
                             setState(() {
-                              flashIndex +=1;
-                              if(flashIndex > FlashMode.values.length) {
-                                flashIndex =0;
+                              flashIndex += 1;
+                              if (flashIndex > FlashMode.values.length) {
+                                flashIndex = 0;
                               }
                               flashMode = FlashMode.values[flashIndex];
                               controller.setFlashMode(flashMode);
@@ -285,42 +294,41 @@ bool videoRecording = false;
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     InkWell(
-                      onTap: (){
-                        setState(() {
-                          // selectedIndex.setAll(0, [false]);
-                          for (int i =0 ;i< selectedIndex.length;i++) {
-                            selectedIndex[i] = false;
-                          }
-                        });
-                      },
-                      child: CircleAvatar(
-                      backgroundColor: const Color(0xFF3B9889),
-                      radius: 26.r,
-                      child: Icon(
-                      Icons.close,
-                      color: Colors.white,
-                      size: 25.r,
-                      ),
-                      )
-
-                    ),
+                        onTap: () {
+                          setState(() {
+                            // selectedIndex.setAll(0, [false]);
+                            for (int i = 0; i < selectedIndex.length; i++) {
+                              selectedIndex[i] = false;
+                            }
+                          });
+                        },
+                        child: CircleAvatar(
+                          backgroundColor: const Color(0xFF3B9889),
+                          radius: 26.r,
+                          child: Icon(
+                            Icons.close,
+                            color: Colors.white,
+                            size: 25.r,
+                          ),
+                        )),
                     InkWell(
-                      onTap: () async{
-    for(int i=0;i<selectedIndex.length;i++){
-    if(selectedIndex[i]) {
-    await  entities[i].file.then((value) => files!.add( value!));
-
-    }
-    }
-    // print("image File path ==> ${imageFile!.path}");
-    // files!.add(File(imageFile!.path));
-    if (kDebugMode) {
-    print("files length ==> ${(files??[]).length}");
-    }
-    if(context.mounted) {
-    Navigator.pop(context, files);
-    }
-    },
+                      onTap: () async {
+                        for (int i = 0; i < selectedIndex.length; i++) {
+                          if (selectedIndex[i]) {
+                            await entities[i]
+                                .file
+                                .then((value) => files!.add(value!));
+                          }
+                        }
+                        // print("image File path ==> ${imageFile!.path}");
+                        // files!.add(File(imageFile!.path));
+                        if (kDebugMode) {
+                          print("files length ==> ${(files ?? []).length}");
+                        }
+                        if (context.mounted) {
+                          Navigator.pop(context, files);
+                        }
+                      },
                       child: CircleAvatar(
                         backgroundColor: const Color(0xFF3B9889),
                         radius: 26.r,
@@ -391,12 +399,11 @@ bool videoRecording = false;
                           return InkWell(
                             onTap: () {
                               setState(() {
-                                selectedIndex[index] =
-                                    !selectedIndex[index];
+                                selectedIndex[index] = !selectedIndex[index];
                               });
                               if (kDebugMode) {
                                 print(
-                                  "photo its index $index and path ${entities[index].relativePath} selected:${selectedIndex[index]}");
+                                    "photo its index $index and path ${entities[index].relativePath} selected:${selectedIndex[index]}");
                               }
                             },
                             child: Stack(
@@ -413,12 +420,9 @@ bool videoRecording = false;
                                   fit: BoxFit.cover
                               )*/ /*
                           ),*/
-                                  child: AssetEntityImage(
-                                    entities[index],
-                                    isOriginal: false,
-                                    thumbnailSize: option.size,
-                                    thumbnailFormat: option.format,
-                                    fit: BoxFit.cover,
+                                  child: ImageItemWidget(
+                                    entity: entities[index],
+                                    option: option,
                                   ),
                                 ),
                                 if (selectedIndex[index])
@@ -426,8 +430,8 @@ bool videoRecording = false;
                                     width: 100,
                                     height: 100,
                                     decoration: BoxDecoration(
-                                      color: Colors.grey.shade700
-                                          .withOpacity(0.4),
+                                      color:
+                                          Colors.grey.shade700.withOpacity(0.4),
                                       // shape: BoxShape.circle
                                     ),
                                     child: const Icon(
@@ -439,8 +443,7 @@ bool videoRecording = false;
                             ),
                           );
                         },
-                        separatorBuilder: (context, index) =>
-                            const SizedBox(
+                        separatorBuilder: (context, index) => const SizedBox(
                           width: 4,
                         ),
                         itemCount: entities.length,
@@ -455,10 +458,9 @@ bool videoRecording = false;
                         if (imagesList.isEmpty) {
                           return;
                         }
-                        files!.addAll(List<File>.generate(
-                            imagesList.length,
-                                (index) => File(imagesList[index].path)));
-                        if(context.mounted) {
+                        files!.addAll(List<File>.generate(imagesList.length,
+                            (index) => File(imagesList[index].path)));
+                        if (context.mounted) {
                           Navigator.pop(context, files);
                         }
 
@@ -477,17 +479,16 @@ bool videoRecording = false;
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   InkWell(
-                    onTap: () async{
+                    onTap: () async {
                       try {
                         List<XFile> imagesList =
-                        await ImagePicker().pickMultipleMedia();
+                            await ImagePicker().pickMultipleMedia();
                         if (imagesList.isEmpty) {
                           return;
                         }
-                        files!.addAll(List<File>.generate(
-                            imagesList.length,
-                                (index) => File(imagesList[index].path)));
-                        if(context.mounted) {
+                        files!.addAll(List<File>.generate(imagesList.length,
+                            (index) => File(imagesList[index].path)));
+                        if (context.mounted) {
                           Navigator.pop(context, files);
                         }
 
@@ -610,16 +611,18 @@ bool videoRecording = false;
                     padding: const EdgeInsets.all(8),
                     margin: const EdgeInsets.only(bottom: 32),
                     decoration: BoxDecoration(
-                        border: Border.all(color: videoRecording?Colors.red:Colors.white, width: 4),
+                        border: Border.all(
+                            color: videoRecording ? Colors.red : Colors.white,
+                            width: 4),
                         shape: BoxShape.circle),
                     child: InkWell(
                       onTap: () async {
-                        if(videoRecording){
+                        if (videoRecording) {
                           controller.stopVideoRecording().then((value) {
                             log('video value $value');
                             setState(() {
                               videoRecording = false;
-                              imageFile =  value;
+                              imageFile = value;
                             });
                             log('format ${imageFile!.name.contains('jpg') || imageFile!.name.contains('jpeg')}');
                             if (kDebugMode) {
@@ -627,18 +630,19 @@ bool videoRecording = false;
                             }
                             files!.add(File(imageFile!.path));
                             if (kDebugMode) {
-                              print("files length ==> ${(files??[]).length}");
+                              print("files length ==> ${(files ?? []).length}");
                             }
-                            if(context.mounted) {  Navigator.pop(context, files);}
+                            if (context.mounted) {
+                              Navigator.pop(context, files);
+                            }
                           });
-                        }
-                        else{
+                        } else {
                           await controller.takePicture().then((value) {
                             if (kDebugMode) {
                               print("good");
                             }
                             setState(() {
-                              imageFile =  value;
+                              imageFile = value;
                             });
                             log('format ${imageFile!.name.contains('jpg') || imageFile!.name.contains('jpeg')}');
                             if (kDebugMode) {
@@ -646,10 +650,11 @@ bool videoRecording = false;
                             }
                             files!.add(File(imageFile!.path));
                             if (kDebugMode) {
-                              print("files length ==> ${(files??[]).length}");
+                              print("files length ==> ${(files ?? []).length}");
                             }
-                            if(context.mounted) {  Navigator.pop(context, files);}
-
+                            if (context.mounted) {
+                              Navigator.pop(context, files);
+                            }
                           });
                         }
 
@@ -657,12 +662,11 @@ bool videoRecording = false;
               Navigator.push(context,MaterialPageRoute(builder: (context)=>ImageView(image: file!)));
         }*/
                       },
-                      onLongPress: ()async{
+                      onLongPress: () async {
                         controller.startVideoRecording();
-setState(() {
-  videoRecording = true;
-
-});                       /* try {
+                        setState(() {
+                          videoRecording = true;
+                        }); /* try {
                           List<XFile> imagesList =[];
                           await ImagePicker().pickVideo(source: ImageSource.camera).then((value) {
 if(value != null) {
@@ -684,20 +688,25 @@ if(value != null) {
                           print("failed to load images");
                         }*/
                       },
-
-                      child:  CircleAvatar(
+                      child: CircleAvatar(
                         radius: 30,
-                        backgroundColor: videoRecording?Colors.transparent:Colors.white,
-                        child: videoRecording?const Icon(Icons.stop,color: Colors.red,size: 25,):null,
+                        backgroundColor:
+                            videoRecording ? Colors.transparent : Colors.white,
+                        child: videoRecording
+                            ? const Icon(
+                                Icons.stop,
+                                color: Colors.red,
+                                size: 25,
+                              )
+                            : null,
                       ),
                     ),
                   ),
                   if (cameras.length > 1)
                     InkWell(
-                      onTap: () async{
-                        if(isFront) {
+                      onTap: () async {
+                        if (isFront) {
                           await controller.setDescription(cameras[0]);
-
                         } else {
                           await controller.setDescription(cameras[1]);
                         }
@@ -712,7 +721,7 @@ if(value != null) {
                         decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             color: Colors.grey.withOpacity(0.8)),
-                        child:  getIconByPlatform(),
+                        child: getIconByPlatform(),
                       ),
                     ),
                 ],

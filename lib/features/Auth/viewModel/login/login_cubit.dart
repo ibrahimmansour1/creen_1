@@ -53,7 +53,7 @@ class LoginCubit extends Cubit<LoginState> {
         return;
       }
       log("loginData.message    =====> ${loginData.message?.toLowerCase()}");
-      // print("loginData.status ==> ${loginData.status}");
+      print("loginData.status ==> ${loginData.status}");
       if (loginData.status == true) {
 
         Fluttertoast.showToast(

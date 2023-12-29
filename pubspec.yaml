@@ -99,7 +99,7 @@ dependencies:
     git: https://github.com/AbdullahGaber/whatsapp_camera.git
   awesome_dialog: ^3.0.2
   url_launcher: ^6.1.10
-  photo_manager: ^2.7.1
+  photo_manager: ^3.0.0-dev.1
   intl: ^0.18.0
   qr_flutter: ^4.0.0
   camera_with_files: any
@@ -180,6 +180,12 @@ flutter:
     - family: DIN
       fonts:
         - asset: assets/fonts/DINNextLTArabic-Regular-3.ttf
+    - family: Roboto
+      fonts:
+        - asset: assets/fonts/Roboto-Regular.ttf
+    - family: Cairo
+      fonts:
+        - asset: assets/fonts/Cairo.ttf
     - family: Arial
       fonts:
         - asset: assets/fonts/arial_arabic.ttf

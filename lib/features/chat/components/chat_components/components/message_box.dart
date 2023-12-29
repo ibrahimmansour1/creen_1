@@ -71,14 +71,14 @@ class _MessageBoxState extends State<MessageBox> {
     var crossAxisAlignment =
         widget.isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start;
     return SwipeTo(
-      onRightSwipe: () {
+      onRightSwipe: (details) {
         NavigationService.push(
           page: AllConversationsScreen(
             link: widget.message,
           ),
         );
       },
-      onLeftSwipe: (){
+      onLeftSwipe: (details){
         /*print("message ${widget.message}");
 setState(() {
   widget.chatCubit.messages.removeAt(widget.inde);
@@ -109,6 +109,107 @@ setState(() {
 
           },
           child: PopupMenuButton(
+            onSelected: (value) {
+              print("beeeeeeeeeeeeeeeeeeeeeeeeeeee");
+              if (!HelperFunctions.validateLogin()) {
+                return;
+              }
+              print("beeeeeeeeeeeeeeeeeeeeeeeeeeee");
+
+              print("value ===> ${value}");
+              if (value == 'report') {
+                showDialog(
+                  context: context,
+                  builder: (context) =>
+                      BlocProvider(
+                        create: (context) => CreateReportCubit(),
+                        child: ReportDialog(
+                          reportType: ReportType.chatMessage,
+                          reportTypeId: widget.messageElement.id,
+                        ),
+                      ),
+                );
+              } else if (value == "delete") {
+                showDialog(
+                  context: context,
+                  builder: (_) =>
+                      AlertDialog(
+                        content: Text(
+                          'do_you_want_to_scan'.translate,
+                          style: const TextStyle(fontSize: 24),
+                        ),
+                        actions: [
+                          TextButton(
+                            onPressed: () async {
+                              widget.chatCubit.deleteMessage(id: widget.messageElement.id!);                     // var videoData =
+                              /*await RemoveVideoRepo.removeVideo(
+                                    context, body: {"video_id":"$reportTypeId"});*/
+                              NavigationService.goBack();
+
+                              // print("ggggggggggggg ${reportTypeId}");
+                              /*NavigationService.goBack();
+                    storiesCubit.deleteStoryByIndex(
+                        storyIndex: storyIndex,
+                        pageIndex: pageIndex,
+                        userId: storiesCubit
+                            .stories[pageIndex].id ??
+                            0,
+                        context: context);*/
+                            },
+                            child: Text(
+                              'yes'.translate,
+                              style: const TextStyle(color: Colors.black),
+                            ),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              NavigationService.goBack();
+                            },
+                            child: Text(
+                              'no'.translate,
+                              style: const TextStyle(color: Colors.black),
+                            ),
+                          ),
+                        ],
+                      ),
+                );
+              }
+              else if(value == "edit"){
+                print("edit message ${widget.message != null}");
+                if(widget.message != null) {
+                  print("widget.message ===> ${widget.message}");
+                  widget.chatCubit.sendMessageController.text =  widget.message!;
+                  widget.chatCubit.edited = true;
+                  widget.chatCubit.messageID = widget.messageElement.id;
+                  print("widget.chatCubit.messageID ===> ${widget.chatCubit.messageID}");
+                  widget.chatCubit.emit(ChatMessageEdit());
+                }
+              }
+              else if(value == "block"){
+
+              }
+
+              setState(() {
+                widget.selected =false;
+              });
+              print("hide\n\n\n\n\n");
+            },
+            position: PopupMenuPosition.under,
+            itemBuilder: (_) =>
+            [
+              if (widget.isMe) ...[
+                HelperFunctions.buildPopupMenu(
+                    icons: Icons.edit, title: 'edit', value: 'edit'),
+                HelperFunctions.buildPopupMenu(
+                    icons: Icons.delete, title: 'delete', value: 'delete'),
+              ] else
+                ...[
+                  HelperFunctions.buildPopupMenu(
+                      icons: Icons.report, title: 'report', value: 'report'),
+                  HelperFunctions.buildPopupMenu(
+                      icons: Icons.block, title: 'block', value: 'block'),
+                ]
+            ],
             child:  Padding(
               padding: const EdgeInsets.symmetric(vertical: 10),
               child: Row(
@@ -651,109 +752,6 @@ setState(() {
                 ],
               ),
             ),
-            // iconSize: MediaQuery.sizeOf(context).width,
-
-            onSelected: (value) {
-              print("beeeeeeeeeeeeeeeeeeeeeeeeeeee");
-              if (!HelperFunctions.validateLogin()) {
-                return;
-              }
-              print("beeeeeeeeeeeeeeeeeeeeeeeeeeee");
-
-              print("value ===> ${value}");
-              if (value == 'report') {
-                showDialog(
-                  context: context,
-                  builder: (context) =>
-                      BlocProvider(
-                        create: (context) => CreateReportCubit(),
-                        child: ReportDialog(
-                          reportType: ReportType.chatMessage,
-                          reportTypeId: widget.messageElement.id,
-                        ),
-                      ),
-                );
-              } else if (value == "delete") {
-                showDialog(
-                  context: context,
-                  builder: (_) =>
-                      AlertDialog(
-                        content: Text(
-                          'do_you_want_to_scan'.translate,
-                          style: const TextStyle(fontSize: 24),
-                        ),
-                        actions: [
-                          TextButton(
-                            onPressed: () async {
-                              widget.chatCubit.deleteMessage(id: widget.messageElement.id!);                     // var videoData =
-                              /*await RemoveVideoRepo.removeVideo(
-                                    context, body: {"video_id":"$reportTypeId"});*/
-                              NavigationService.goBack();
-
-                              // print("ggggggggggggg ${reportTypeId}");
-                              /*NavigationService.goBack();
-                    storiesCubit.deleteStoryByIndex(
-                        storyIndex: storyIndex,
-                        pageIndex: pageIndex,
-                        userId: storiesCubit
-                            .stories[pageIndex].id ??
-                            0,
-                        context: context);*/
-                            },
-                            child: Text(
-                              'yes'.translate,
-                              style: const TextStyle(color: Colors.black),
-                            ),
-                          ),
-                          TextButton(
-                            onPressed: () {
-                              NavigationService.goBack();
-                            },
-                            child: Text(
-                              'no'.translate,
-                              style: const TextStyle(color: Colors.black),
-                            ),
-                          ),
-                        ],
-                      ),
-                );
-              }
-              else if(value == "edit"){
-                print("edit message ${widget.message != null}");
-                if(widget.message != null) {
-                  print("widget.message ===> ${widget.message}");
-                  widget.chatCubit.sendMessageController.text =  widget.message!;
-                  widget.chatCubit.edited = true;
-                  widget.chatCubit.messageID = widget.messageElement.id;
-                  print("widget.chatCubit.messageID ===> ${widget.chatCubit.messageID}");
-                  widget.chatCubit.emit(ChatMessageEdit());
-                }
-              }
-              else if(value == "block"){
-
-              }
-
-              setState(() {
-                widget.selected =false;
-              });
-              print("hide\n\n\n\n\n");
-            },
-            position: PopupMenuPosition.under,
-            itemBuilder: (_) =>
-            [
-              if (widget.isMe) ...[
-                HelperFunctions.buildPopupMenu(
-                    icons: Icons.edit, title: 'edit', value: 'edit'),
-                HelperFunctions.buildPopupMenu(
-                    icons: Icons.delete, title: 'delete', value: 'delete'),
-              ] else
-                ...[
-                  HelperFunctions.buildPopupMenu(
-                      icons: Icons.report, title: 'report', value: 'report'),
-                  HelperFunctions.buildPopupMenu(
-                      icons: Icons.block, title: 'block', value: 'block'),
-                ]
-            ],
           ),
 
 
@@ -793,7 +791,7 @@ setState(() {
     // }
   }
   Widget moreChoices(BuildContext context,{required int? id, required bool mee})=>            PopupMenuButton(
-    icon: Icon(
+    icon: const Icon(
       Icons.more_horiz,
 
     ),
