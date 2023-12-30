@@ -90,6 +90,7 @@ dependencies:
   story: ^1.0.0+1
   video_thumbnail_imageview: ^0.0.5
   video_thumbnail: ^0.5.3
+  hidable: ^1.0.6
 
   # those package doesn't support run on iOS simulator
   pedometer: ^3.0.0
