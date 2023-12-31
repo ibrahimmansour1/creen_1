@@ -29,7 +29,7 @@
 
     ],
     "ZLPhotoBrowser": [
-      "~> 4.3.9"
+      "4.4.8.1"
     ]
   },
   "platforms": {

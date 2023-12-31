@@ -27,13 +27,18 @@ typedef struct WZ265DecConfig {
   int bEnableDumpBsToFile;     // For debug: write input bs to File
   char *strDumpBsFileName;     // for debug: file name of bs
   int logLevel;                // For debug: log level
+  int calcMD5;      // For debug: calculate md5. 0, disabled;1.plane seperated; 2. yuv whole
+  int checkMD5Sei;  // For debug: check md5 with md5 in sei
+  int parseOnly;
 } WZ265DecConfig;
 
 // information of decoded frame
 typedef struct WZ265FrameInfo {
-  int nWidth;     // frame width
-  int nHeight;    // frame height
-  long long pts;  // time stamp
+  int nWidth;             // frame width
+  int nHeight;            // frame height
+  int chroma_format_idc;  // 0: Monochrome 1: 420 2: 422 3: 444
+  int bitDepth;           // 8 or 10
+  long long pts;          // time stamp
   int poc;
 } WZ265FrameInfo;
 
@@ -43,6 +48,7 @@ typedef struct WZ265Frame {
   unsigned char *pData[3];  // Y U V
   short iStride[3];         // stride for each component
   WZ265FrameInfo frameinfo;
+  double fAvgQp;
 } WZ265Frame;
 
 #if defined(__cplusplus)

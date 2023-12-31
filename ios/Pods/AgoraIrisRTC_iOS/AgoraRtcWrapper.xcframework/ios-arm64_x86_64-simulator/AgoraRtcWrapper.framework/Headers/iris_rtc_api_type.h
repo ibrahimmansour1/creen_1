@@ -466,6 +466,8 @@
 #define FUNC_RTCENGINE_STARTORUPDATECHANNELMEDIARELAY                          \
   "RtcEngine_startOrUpdateChannelMediaRelay"
 #define FUNC_RTCENGINE_GETNTPWALLTIMEINMS "RtcEngine_getNtpWallTimeInMs"
+#define FUNC_RTCENGINE_ISFEATUREAVAILABLEONDEVICE                              \
+  "RtcEngine_isFeatureAvailableOnDevice"
 #define FUNC_RTCENGINE_PRELOADCHANNEL "RtcEngine_preloadChannel"
 #define FUNC_RTCENGINE_PRELOADCHANNEL2 "RtcEngine_preloadChannel2"
 #define FUNC_RTCENGINE_UPDATEPRELOADCHANNELTOKEN                               \
@@ -862,6 +864,8 @@
   "RtcEngineEx_enableWirelessAccelerate"
 #define FUNC_RTCENGINEEX_SETDUALSTREAMMODEEX "RtcEngineEx_setDualStreamModeEx"
 #define FUNC_RTCENGINEEX_TAKESNAPSHOTEX "RtcEngineEx_takeSnapshotEx"
+#define FUNC_RTCENGINEEX_ENABLECONTENTINSPECTEX                                \
+  "RtcEngineEx_enableContentInspectEx"
 #define FUNC_RTCENGINEEX_LEAVECHANNELEX2 "RtcEngineEx_leaveChannelEx2"
 #define FUNC_RTCENGINEEX_ADJUSTUSERPLAYBACKSIGNALVOLUMEEX                      \
   "RtcEngineEx_adjustUserPlaybackSignalVolumeEx"

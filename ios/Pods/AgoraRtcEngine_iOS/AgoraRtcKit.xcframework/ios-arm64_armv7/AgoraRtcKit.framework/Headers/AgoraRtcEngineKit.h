@@ -3566,6 +3566,16 @@ You can call this method to enable the color enhancement feature and set the opt
  */
 - (int)setVideoScenario:(AgoraApplicationScenarioType)scenarioType  NS_SWIFT_NAME(setVideoScenario(_:));
 
+/** Whether the target feature is available for the device.
+ @since v4.2.0
+ @param type The feature type. See AgoraFeatureType.
+
+ @return
+  - true: available.
+  - false: not available.
+  */
+- (BOOL)isFeatureAvailableOnDevice:(AgoraFeatureType)type;
+
 #pragma mark Audio Effect
 
 /**-----------------------------------------------------------------------------

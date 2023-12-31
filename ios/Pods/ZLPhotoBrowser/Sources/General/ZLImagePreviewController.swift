@@ -56,7 +56,7 @@ public class ZLImagePreviewController: UIViewController {
     private var indexBeforOrientationChanged: Int
     
     private lazy var collectionView: UICollectionView = {
-        let layout = UICollectionViewFlowLayout()
+        let layout = ZLCollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
         
         let view = UICollectionView(frame: .zero, collectionViewLayout: layout)
@@ -87,8 +87,14 @@ public class ZLImagePreviewController: UIViewController {
     
     private lazy var backBtn: UIButton = {
         let btn = UIButton(type: .custom)
-        btn.setImage(.zl.getImage("zl_navBack"), for: .normal)
-        btn.imageEdgeInsets = UIEdgeInsets(top: 0, left: -10, bottom: 0, right: 0)
+        var image = UIImage.zl.getImage("zl_navBack")
+        if isRTL() {
+            image = image?.imageFlippedForRightToLeftLayoutDirection()
+            btn.imageEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: -10)
+        } else {
+            btn.imageEdgeInsets = UIEdgeInsets(top: 0, left: -10, bottom: 0, right: 0)
+        }
+        btn.setImage(image, for: .normal)
         btn.addTarget(self, action: #selector(backBtnClick), for: .touchUpInside)
         return btn
     }()
@@ -103,7 +109,7 @@ public class ZLImagePreviewController: UIViewController {
     
     private lazy var selectBtn: ZLEnlargeButton = {
         let btn = ZLEnlargeButton(type: .custom)
-        btn.setImage(.zl.getImage("zl_btn_circle"), for: .normal)
+        btn.setImage(.zl.getImage("zl_btn_unselected_with_check"), for: .normal)
         btn.setImage(.zl.getImage("zl_btn_selected"), for: .selected)
         btn.enlargeInset = 10
         btn.addTarget(self, action: #selector(selectBtnClick), for: .touchUpInside)
@@ -144,11 +150,13 @@ public class ZLImagePreviewController: UIViewController {
     @objc public var videoHttpHeader: [String: Any]?
     
     override public var prefersStatusBarHidden: Bool {
-        return !ZLPhotoUIConfiguration.default().showStatusBarInPreviewInterface
+        !ZLPhotoUIConfiguration.default().showStatusBarInPreviewInterface
     }
     
+    override public var prefersHomeIndicatorAutoHidden: Bool { true }
+    
     override public var preferredStatusBarStyle: UIStatusBarStyle {
-        return ZLPhotoUIConfiguration.default().statusBarStyle
+        ZLPhotoUIConfiguration.default().statusBarStyle
     }
     
     deinit {
@@ -214,23 +222,34 @@ public class ZLImagePreviewController: UIViewController {
         
         var insets = UIEdgeInsets(top: 20, left: 0, bottom: 0, right: 0)
         if #available(iOS 11.0, *) {
-            insets = self.view.safeAreaInsets
+            insets = view.safeAreaInsets
         }
         insets.top = max(20, insets.top)
         
-        collectionView.frame = CGRect(x: -ZLPhotoPreviewController.colItemSpacing / 2, y: 0, width: view.frame.width + ZLPhotoPreviewController.colItemSpacing, height: view.frame.height)
+        collectionView.frame = CGRect(
+            x: -ZLPhotoPreviewController.colItemSpacing / 2,
+            y: 0,
+            width: view.zl.width + ZLPhotoPreviewController.colItemSpacing,
+            height: view.zl.height
+        )
         
         let navH = insets.top + 44
-        navView.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: navH)
+        navView.frame = CGRect(x: 0, y: 0, width: view.zl.width, height: navH)
         navBlurView?.frame = navView.bounds
         
-        backBtn.frame = CGRect(x: insets.left, y: insets.top, width: 60, height: 44)
-        indexLabel.frame = CGRect(x: (view.frame.width - 80) / 2, y: insets.top, width: 80, height: 44)
-        selectBtn.frame = CGRect(x: view.frame.width - 40 - insets.right, y: insets.top + (44 - 25) / 2, width: 25, height: 25)
+        indexLabel.frame = CGRect(x: (view.zl.width - 80) / 2, y: insets.top, width: 80, height: 44)
+        
+        if isRTL() {
+            backBtn.frame = CGRect(x: view.zl.width - insets.right - 60, y: insets.top, width: 60, height: 44)
+            selectBtn.frame = CGRect(x: insets.left + 15, y: insets.top + (44 - 25) / 2, width: 25, height: 25)
+        } else {
+            backBtn.frame = CGRect(x: insets.left, y: insets.top, width: 60, height: 44)
+            selectBtn.frame = CGRect(x: view.zl.width - 40 - insets.right, y: insets.top + (44 - 25) / 2, width: 25, height: 25)
+        }
         
         let bottomViewH = ZLLayout.bottomToolViewH
         
-        bottomView.frame = CGRect(x: 0, y: view.frame.height - insets.bottom - bottomViewH, width: view.frame.width, height: bottomViewH + insets.bottom)
+        bottomView.frame = CGRect(x: 0, y: view.zl.height - insets.bottom - bottomViewH, width: view.zl.width, height: bottomViewH + insets.bottom)
         bottomBlurView?.frame = bottomView.bounds
         
         resetBottomViewFrame()
@@ -240,21 +259,17 @@ public class ZLImagePreviewController: UIViewController {
             orientation = ori
             collectionView.setContentOffset(
                 CGPoint(
-                    x: (view.frame.width + ZLPhotoPreviewController.colItemSpacing) * CGFloat(indexBeforOrientationChanged),
+                    x: (view.zl.width + ZLPhotoPreviewController.colItemSpacing) * CGFloat(indexBeforOrientationChanged),
                     y: 0
                 ),
                 animated: false
             )
-            collectionView.performBatchUpdates({
-                self.collectionView.setContentOffset(
-                    CGPoint(
-                        x: (self.view.frame.width + ZLPhotoPreviewController.colItemSpacing) * CGFloat(self.indexBeforOrientationChanged),
-                        y: 0
-                    ),
-                    animated: false
-                )
-            })
         }
+    }
+    
+    override public func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        super.viewWillTransition(to: size, with: coordinator)
+        collectionView.collectionViewLayout.invalidateLayout()
     }
     
     private func reloadCurrentCell() {
@@ -350,7 +365,7 @@ public class ZLImagePreviewController: UIViewController {
         if isSelected {
             isSelected = false
         } else {
-            if ZLPhotoConfiguration.default().animateSelectBtnWhenSelect {
+            if ZLPhotoUIConfiguration.default().animateSelectBtnWhenSelectInPreviewVC {
                 selectBtn.layer.add(ZLAnimationUtils.springAnimation(), forKey: nil)
             }
             isSelected = true
@@ -535,10 +550,12 @@ extension ZLImagePreviewController: UICollectionViewDataSource, UICollectionView
         return baseCell
     }
     
+    public func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        (cell as? ZLPreviewBaseCell)?.willDisplay()
+    }
+    
     public func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-        if let cell = cell as? ZLPreviewBaseCell {
-            cell.resetSubViewStatusWhenCellEndDisplay()
-        }
+        (cell as? ZLPreviewBaseCell)?.didEndDisplaying()
     }
     
     private func showSaveImageAlert() {
@@ -547,8 +564,7 @@ extension ZLImagePreviewController: UICollectionViewDataSource, UICollectionView
                 return
             }
             
-            let hud = ZLProgressHUD(style: ZLPhotoUIConfiguration.default().hudStyle)
-            hud.show()
+            let hud = ZLProgressHUD.show(toast: .processing)
             ZLPhotoManager.saveImageToAlbum(image: image) { [weak self] suc, _ in
                 hud.hide()
                 if !suc {

@@ -1394,6 +1394,11 @@ enum PROXY_TYPE {
   HTTPS_PROXY_TYPE = 6,
 };
 
+enum FeatureType {
+  VIDEO_VIRTUAL_BACKGROUND = 1,
+  VIDEO_BEAUTY_EFFECT = 2,
+};
+
 /**
  * The options for leaving a channel.
  */
@@ -8287,6 +8292,16 @@ class IRtcEngine : public agora::base::IEngineBase {
    * Return current NTP(unix timestamp) time in milliseconds.
    */
   virtual uint64_t getNtpWallTimeInMs() = 0;
+
+  /** 
+   * @brief Whether the target feature is available for the device.
+   * @since v4.2.0
+   * @param type The feature type. See FeatureType.
+   * @return
+   * - true: available.
+   * - false: not available.
+   */
+  virtual bool isFeatureAvailableOnDevice(FeatureType type) = 0;
 
 };
 

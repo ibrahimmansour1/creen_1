@@ -73,7 +73,10 @@ typedef NS_ENUM(NSUInteger, AgoraMusicContentCenterStatusCode) {
      * 6: Music decryption error. Please contact technical support
      */
     AgoraMusicContentCenterStatusCodeErrorMusicDecryption = 6,
-
+    /**
+     * 7: Http internal error. Please retry later.
+     */
+    AgoraMusicContentCenterStatusCodeErrorHttpInternalError = 7,
 };
 
 typedef NS_ENUM(NSUInteger, AgoraMusicCacheStatusType) {
@@ -298,6 +301,10 @@ __attribute__((visibility("default"))) @interface AgoraMusicContentCenterConfig 
  * The max number which the music content center caches cannot exceed 50.
  */
 @property (nonatomic, assign) NSUInteger maxCacheSize;
+/**
+ * @technical preview
+ */
+@property(nonatomic, copy) NSString* mccDomain;
 @end
 
 @protocol AgoraMusicPlayerProtocol <AgoraRtcMediaPlayerProtocol>

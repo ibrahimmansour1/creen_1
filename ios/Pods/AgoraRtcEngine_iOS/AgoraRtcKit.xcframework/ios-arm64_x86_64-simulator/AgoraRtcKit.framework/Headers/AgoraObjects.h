@@ -2771,6 +2771,10 @@ __attribute__((visibility("default"))) @interface AgoraContentInspectModule: NSO
 
 __attribute__((visibility("default"))) @interface AgoraContentInspectConfig: NSObject
 @property (nonatomic, copy) NSString* _Nullable extraInfo;
+/**
+ * The specific server configuration for image moderation. Please contact technical support.
+ */
+@property (nonatomic, copy) NSString* _Nullable serverConfig;
 @property(copy, nonatomic) NSArray<AgoraContentInspectModule*>* _Nullable modules;
 @end
 /**

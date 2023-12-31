@@ -7,7 +7,7 @@
 	<key>CFBundleExecutable</key>
 	<string>video_enc</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.agora.videoenc</string>
+	<string>com.videoenc</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>

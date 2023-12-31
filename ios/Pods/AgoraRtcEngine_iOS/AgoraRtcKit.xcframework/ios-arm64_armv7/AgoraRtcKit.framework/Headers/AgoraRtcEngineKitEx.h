@@ -776,6 +776,19 @@ If the remote user does not receive the data stream within five seconds, the SDK
 
 - (NSInteger)takeSnapshotEx:(AgoraRtcConnection * _Nonnull)connection uid:(NSInteger)uid filePath:(NSString* _Nonnull)filePath NS_SWIFT_NAME(takeSnapshotEx(_:uid:filePath:));
 
+/** 
+ *  Enables video screenshot and upload with the connection ID.
+ * @param enabled Whether to video screenshot and upload:
+ * - `true`: Yes.
+ * - `false`: No.
+ * @param config The configuration for video screenshot and upload.
+ * @param connection The connection information. See AgoraRtcConnection.
+ * @return
+ * - 0: Success.
+ * - < 0: Failure.
+ */
+- (int)enableContentInspectEx:(BOOL)enabled config:(AgoraContentInspectConfig* _Nonnull)config connection:(AgoraRtcConnection * _Nonnull)connection NS_SWIFT_NAME(enableContentInspectEx(_:config:connection:));
+
 /** Publishes the local stream without transcoding to a specified CDN live RTMP address.  (CDN live only.)
   *
   * @param url The CDN streaming URL in the RTMP format. The maximum length of this parameter is 1024 bytes.

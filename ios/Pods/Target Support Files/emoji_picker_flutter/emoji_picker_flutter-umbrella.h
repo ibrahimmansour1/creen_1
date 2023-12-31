@@ -10,7 +10,6 @@
 #endif
 #endif
 
-#import "EmojiPickerFlutterPlugin.h"
 
 FOUNDATION_EXPORT double emoji_picker_flutterVersionNumber;
 FOUNDATION_EXPORT const unsigned char emoji_picker_flutterVersionString[];

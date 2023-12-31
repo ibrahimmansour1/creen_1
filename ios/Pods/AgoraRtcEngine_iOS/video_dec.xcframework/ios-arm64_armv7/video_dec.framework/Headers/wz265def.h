@@ -285,6 +285,8 @@ typedef void (*WZLogPrintf)(const char *msg);
 extern "C" {
 #endif  //__cplusplus
 
+// @OBFUSAPI@
+
 // log output callback function pointer
 // if  pFuncCB == NULL, use the default printf
 _h_dll_export void wz265_set_log_printf(WZLogPrintf pFuncCB);

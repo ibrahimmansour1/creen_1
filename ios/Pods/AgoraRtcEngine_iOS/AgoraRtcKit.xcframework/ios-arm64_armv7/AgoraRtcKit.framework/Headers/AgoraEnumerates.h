@@ -1068,6 +1068,18 @@ typedef NS_ENUM(NSUInteger, AgoraAudioLocalError) {
      * 5: The local audio encoding fails.
      */
     AgoraAudioLocalErrorEncodeFailure = 5,
+    /**
+    * 6: (macOS only) The SDK cannot find the local audio recording device.
+    */
+    AgoraAudioLocalErrorNoRecordingDevice = 6,
+    /** 
+    * 7: (macOS only) The SDK cannot find the local audio playback device.
+    */
+    AgoraAudioLocalErrorNoPlayoutDevice = 7,
+    /**
+    * 8: (iOS only) The local audio is interrupted by system calls, Siri, alarm clock, etc.
+    */
+    AgoraAudioLocalErrorInterrupted = 8,
 };
 
 /** Audio codec profile. */
@@ -2061,6 +2073,10 @@ typedef NS_ENUM(NSInteger, AgoraConnectionChangedReason) {
    * 21: The connection is failed due to license validation failure.
    */
   AgoraConnectionChangedLicenseValidationFailure = 21,
+  /**
+   * 22: The connection is failed due to certification verify failure.
+   */
+  AgoraConnectionChangedCertificationVerifyFailure = 22,
 };
 
 typedef NS_ENUM(NSInteger, AgoraClientRoleChangeFailedReason) {
@@ -2934,12 +2950,17 @@ typedef NS_ENUM(NSInteger, AgoraThreadPriorityType) {
 };
 
 typedef NS_ENUM(NSUInteger, AgoraContentInspectType) {
-    /**< default type is invalid */
+    /** default type is invalid */
     AgoraContentInspectTypeInvalid = 0,
-    /**< content inspect type moderation */
-    AgoraContentInspectTypeModeration = 1,
-    /**< content inspect type supervise */
-    AgoraContentInspectTypeSupervise = 2
+    /**
+     * @deprecated
+     *  content inspect type moderation
+     */
+    AgoraContentInspectTypeModeration __deprecated = 1,
+    /** content inspect type supervise */
+    AgoraContentInspectTypeSupervise = 2,
+    /** content inspect type image moderation */
+    AgoraContentInspectTypeImageModeration = 3, 
 };
 
 typedef NS_ENUM(NSUInteger, AgoraContentInspectResult) {
@@ -3292,4 +3313,9 @@ typedef NS_ENUM(NSInteger, AgoraH265TranscodeResult) {
    * 10: Service is unavailable.
   */
   AgoraH265TranscodeResultServiceUnavailable = 10
+};
+
+typedef NS_ENUM(NSUInteger, AgoraFeatureType) {
+  AgoraVideoPreprocessVirtualBackground = 1,
+  AgoraVideoPreprocessBeauty = 2,
 };

@@ -19,7 +19,7 @@
                 <!-- Registered Callback URLs in FacebookApp -->
                 <string>fb1476716329737731</string>
                 <!-- Registered Callback URLs in TwitterApp -->
-                <string>https://creen-d9403.firebaseapp.com/__/auth/handler</string>
+                <string>https://creen-ed5ef.firebaseapp.com/__/auth/handler</string>
     		</array>
     		<key>FacebookAppID</key>
             <string>1476716329737731</string>

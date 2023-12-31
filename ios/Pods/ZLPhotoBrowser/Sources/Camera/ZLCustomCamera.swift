@@ -38,7 +38,7 @@ open class ZLCustomCamera: UIViewController {
         static let borderLayerWidth: CGFloat = 1.8
         static let animateLayerWidth: CGFloat = 5
         static let cameraBtnNormalColor: UIColor = .white
-        static let cameraBtnRecodingBorderColor: UIColor = .white.withAlphaComponent(0.8)//.zl.rgba(250, 250, 230).withAlphaComponent(0.8)
+        static let cameraBtnRecodingBorderColor: UIColor = .white.withAlphaComponent(0.8)
     }
     
     @objc public var takeDoneBlock: ((UIImage?, URL?) -> Void)?
@@ -209,6 +209,8 @@ open class ZLCustomCamera: UIViewController {
     
     private var recordUrls: [URL] = []
     
+    private var recordDurations: [Double] = []
+    
     private var microPhontIsAvailable = true
     
     private lazy var focusCursorTapGes: UITapGestureRecognizer = {
@@ -294,7 +296,7 @@ open class ZLCustomCamera: UIViewController {
         
         if cameraConfig.allowRecordVideo {
             do {
-                try AVAudioSession.sharedInstance().setCategory(.playAndRecord, mode: .videoRecording, options: .mixWithOthers)
+                try AVAudioSession.sharedInstance().setCategory(.playAndRecord, mode: .videoRecording, options: .duckOthers)
                 try AVAudioSession.sharedInstance().setActive(true, options: .notifyOthersOnDeactivation)
             } catch {
                 let err = error as NSError
@@ -399,7 +401,7 @@ open class ZLCustomCamera: UIViewController {
                 font: .zl.font(ofSize: 14),
                 limitSize: CGSize(width: view.bounds.width - 20, height: .greatestFiniteMagnitude)
             )
-            .height + 20
+            .height + 30
         tipsLabel.frame = CGRect(x: 10, y: bottomView.frame.minY - tipsTextHeight, width: view.bounds.width - 20, height: tipsTextHeight)
         
         let doneBtnW = localLanguageTextValue(.done).zl
@@ -457,6 +459,13 @@ open class ZLCustomCamera: UIViewController {
         view.addSubview(retakeBtn)
         view.addSubview(doneBtn)
         
+        // 预览layer
+        previewLayer = AVCaptureVideoPreviewLayer(session: session)
+        previewLayer?.videoGravity = .resizeAspectFill
+        previewLayer?.opacity = 0
+        view.layer.masksToBounds = true
+        view.layer.insertSublayer(previewLayer!, at: 0)
+        
         view.addGestureRecognizer(focusCursorTapGes)
         
         let pinchGes = UIPinchGestureRecognizer(target: self, action: #selector(pinchToAdjustCameraFocus(_:)))
@@ -504,61 +513,71 @@ open class ZLCustomCamera: UIViewController {
     }
     
     private func setupCamera() {
-        guard let backCamera = getCamera(position: .back) else { return }
-        guard let input = try? AVCaptureDeviceInput(device: backCamera) else { return }
-        
-        session.beginConfiguration()
-        
-        // 相机画面输入流
-        videoInput = input
-        
-        let preset = ZLPhotoConfiguration.default().cameraConfiguration.sessionPreset.avSessionPreset
-        if session.canSetSessionPreset(preset) {
-            session.sessionPreset = preset
-        } else {
-            session.sessionPreset = .photo
-        }
-        
-        let movieFileOutput = AVCaptureMovieFileOutput()
-        // 解决视频录制超过10s没有声音的bug
-        movieFileOutput.movieFragmentInterval = .invalid
-        self.movieFileOutput = movieFileOutput
-        
-        // 添加视频输入
-        if let videoInput = videoInput, session.canAddInput(videoInput) {
-            session.addInput(videoInput)
-        }
-        // 添加音频输入
-        addAudioInput()
-        
-        // 照片输出流
-        let imageOutput = AVCapturePhotoOutput()
-        self.imageOutput = imageOutput
-        // 将输出流添加到session
-        if session.canAddOutput(imageOutput) {
-            session.addOutput(imageOutput)
-        }
-        if session.canAddOutput(movieFileOutput) {
-            session.addOutput(movieFileOutput)
-        }
-        
-        // imageOutPut添加到session之后才能判断supportedFlashModes
-        if !ZLPhotoConfiguration.default().cameraConfiguration.showFlashSwitch || !imageOutput.supportedFlashModes.contains(.on) {
-            showFlashBtn = false
-        }
-        
-        session.commitConfiguration()
-        // 预览layer
-        previewLayer = AVCaptureVideoPreviewLayer(session: session)
-        previewLayer?.videoGravity = .resizeAspectFill
-        previewLayer?.opacity = 0
-        view.layer.masksToBounds = true
-        view.layer.insertSublayer(previewLayer!, at: 0)
-        
-        cameraConfigureFinish = true
-        
         sessionQueue.async {
+            let cameraConfig = ZLPhotoConfiguration.default().cameraConfiguration
+            
+            guard let camera = self.getCamera(position: cameraConfig.devicePosition.avDevicePosition) else { return }
+            guard let input = try? AVCaptureDeviceInput(device: camera) else { return }
+            
+            self.session.beginConfiguration()
+            
+            // 相机画面输入流
+            self.videoInput = input
+            
+            self.refreshSessionPreset(device: camera)
+            
+            let movieFileOutput = AVCaptureMovieFileOutput()
+            // 解决视频录制超过10s没有声音的bug
+            movieFileOutput.movieFragmentInterval = .invalid
+            self.movieFileOutput = movieFileOutput
+            
+            // 添加视频输入
+            if let videoInput = self.videoInput, self.session.canAddInput(videoInput) {
+                self.session.addInput(videoInput)
+            }
+            // 添加音频输入
+            self.addAudioInput()
+            
+            // 照片输出流
+            let imageOutput = AVCapturePhotoOutput()
+            self.imageOutput = imageOutput
+            // 将输出流添加到session
+            if self.session.canAddOutput(imageOutput) {
+                self.session.addOutput(imageOutput)
+            }
+            if self.session.canAddOutput(movieFileOutput) {
+                self.session.addOutput(movieFileOutput)
+            }
+            
+            // imageOutPut添加到session之后才能判断supportedFlashModes
+            if !cameraConfig.showFlashSwitch || self.torchDevice?.hasFlash == false {
+                ZLMainAsync {
+                    self.showFlashBtn = false
+                }
+            }
+            
+            self.session.commitConfiguration()
+            
+            self.cameraConfigureFinish = true
+            
             self.session.startRunning()
+        }
+    }
+    
+    private func refreshSessionPreset(device: AVCaptureDevice) {
+        func setSessionPreset(_ preset: AVCaptureSession.Preset) {
+            guard session.sessionPreset != preset else {
+                return
+            }
+            
+            session.sessionPreset = preset
+        }
+        
+        let preset = cameraConfig.sessionPreset.avSessionPreset
+        if device.supportsSessionPreset(preset), session.canSetSessionPreset(preset) {
+            setSessionPreset(preset)
+        } else {
+            setSessionPreset(.photo)
         }
     }
     
@@ -578,12 +597,15 @@ open class ZLCustomCamera: UIViewController {
     
     private func addAudioInput() {
         guard cameraConfig.allowRecordVideo else { return }
+        
         // 音频输入流
         var audioInput: AVCaptureDeviceInput?
         if let microphone = getMicrophone() {
             audioInput = try? AVCaptureDeviceInput(device: microphone)
         }
+        
         guard microPhontIsAvailable, let ai = audioInput else { return }
+        
         removeAudioInput()
         
         if session.isRunning {
@@ -757,43 +779,53 @@ open class ZLCustomCamera: UIViewController {
     }
     
     @objc private func switchCameraBtnClick() {
-        do {
-            guard !restartRecordAfterSwitchCamera else {
-                return
-            }
-            
-            guard let currInput = videoInput,
-                  let movieFileOutput = movieFileOutput else {
-                return
-            }
-            var newVideoInput: AVCaptureDeviceInput?
-            if currInput.device.position == .back, let front = getCamera(position: .front) {
-                newVideoInput = try AVCaptureDeviceInput(device: front)
-            } else if currInput.device.position == .front, let back = getCamera(position: .back) {
-                newVideoInput = try AVCaptureDeviceInput(device: back)
-            } else {
-                return
-            }
-            
-            if let newVideoInput = newVideoInput {
-                session.beginConfiguration()
-                session.removeInput(currInput)
-                if session.canAddInput(newVideoInput) {
-                    session.addInput(newVideoInput)
-                    videoInput = newVideoInput
+        guard !restartRecordAfterSwitchCamera else {
+            return
+        }
+        
+        guard let currInput = videoInput,
+              let movieFileOutput = movieFileOutput else {
+            return
+        }
+        
+        if movieFileOutput.isRecording {
+            let pauseTime = animateLayer.convertTime(CACurrentMediaTime(), from: nil)
+            animateLayer.speed = 0
+            animateLayer.timeOffset = pauseTime
+            restartRecordAfterSwitchCamera = true
+        }
+        
+        sessionQueue.async {
+            do {
+                var newVideoInput: AVCaptureDeviceInput?
+                if currInput.device.position == .back, let front = self.getCamera(position: .front) {
+                    newVideoInput = try AVCaptureDeviceInput(device: front)
+                } else if currInput.device.position == .front, let back = self.getCamera(position: .back) {
+                    newVideoInput = try AVCaptureDeviceInput(device: back)
                 } else {
-                    session.addInput(currInput)
+                    return
                 }
-                session.commitConfiguration()
-                if movieFileOutput.isRecording {
-                    let pauseTime = animateLayer.convertTime(CACurrentMediaTime(), from: nil)
-                    animateLayer.speed = 0
-                    animateLayer.timeOffset = pauseTime
-                    restartRecordAfterSwitchCamera = true
+                
+                if let newVideoInput = newVideoInput {
+                    self.session.beginConfiguration()
+                    
+                    self.refreshSessionPreset(device: newVideoInput.device)
+                    
+                    self.session.removeInput(currInput)
+                    
+                    if self.session.canAddInput(newVideoInput) {
+                        self.session.addInput(newVideoInput)
+                        self.videoInput = newVideoInput
+                    } else {
+                        self.refreshSessionPreset(device: currInput.device)
+                        self.session.addInput(currInput)
+                    }
+                    
+                    self.session.commitConfiguration()
                 }
+            } catch {
+                zl_debugPrint("切换摄像头失败 \(error.localizedDescription)")
             }
-        } catch {
-            zl_debugPrint("切换摄像头失败 \(error.localizedDescription)")
         }
     }
     
@@ -865,7 +897,7 @@ open class ZLCustomCamera: UIViewController {
     // 长按录像
     @objc private func longPressAction(_ longGes: UILongPressGestureRecognizer) {
         if longGes.state == .began {
-            guard ZLPhotoManager.hasCameraAuthority(), ZLPhotoManager.hasMicrophoneAuthority() else {
+            guard ZLPhotoManager.hasCameraAuthority() else {
                 return
             }
             startRecord()
@@ -1012,12 +1044,14 @@ open class ZLCustomCamera: UIViewController {
             return
         }
         
-        do {
-            try torchDevice?.lockForConfiguration()
-            torchDevice?.torchMode = .on
-            torchDevice?.unlockForConfiguration()
-        } catch {
-            debugPrint("打开手电筒失败 \(error.localizedDescription)")
+        sessionQueue.async {
+            do {
+                try self.torchDevice?.lockForConfiguration()
+                self.torchDevice?.torchMode = .on
+                self.torchDevice?.unlockForConfiguration()
+            } catch {
+                zl_debugPrint("打开手电筒失败 \(error.localizedDescription)")
+            }
         }
     }
     
@@ -1029,12 +1063,14 @@ open class ZLCustomCamera: UIViewController {
             return
         }
         
-        do {
-            try torchDevice?.lockForConfiguration()
-            torchDevice?.torchMode = .off
-            torchDevice?.unlockForConfiguration()
-        } catch {
-            debugPrint("关闭手电筒失败 \(error.localizedDescription)")
+        sessionQueue.async {
+            do {
+                try self.torchDevice?.lockForConfiguration()
+                self.torchDevice?.torchMode = .off
+                self.torchDevice?.unlockForConfiguration()
+            } catch {
+                zl_debugPrint("关闭手电筒失败 \(error.localizedDescription)")
+            }
         }
     }
     
@@ -1063,6 +1099,14 @@ open class ZLCustomCamera: UIViewController {
         } else {
             connection?.videoOrientation = cacheVideoOrientation
         }
+        
+        // 解决不同系统版本,因为录制视频编码导致安卓端无法播放的问题
+        if #available(iOS 11.0, *),
+           movieFileOutput.availableVideoCodecTypes.contains(cameraConfig.videoCodecType),
+           let connection = connection {
+            let outputSettings = [AVVideoCodecKey: cameraConfig.videoCodecType]
+            movieFileOutput.setOutputSettings(outputSettings, for: connection)
+        }
         // 解决前置摄像头录制视频时候左右颠倒的问题
         if videoInput?.device.position == .front {
             // 镜像设置
@@ -1080,6 +1124,7 @@ open class ZLCustomCamera: UIViewController {
     
     private func finishRecord() {
         closeTorch()
+        restartRecordAfterSwitchCamera = false
         
         guard let movieFileOutput = movieFileOutput else {
             return
@@ -1088,7 +1133,7 @@ open class ZLCustomCamera: UIViewController {
         guard movieFileOutput.isRecording else {
             return
         }
-        try? AVAudioSession.sharedInstance().setCategory(.playback)
+        
         movieFileOutput.stopRecording()
     }
     
@@ -1113,6 +1158,9 @@ open class ZLCustomCamera: UIViewController {
         ZLMainAsync {
             self.borderLayer.strokeColor = ZLCustomCamera.Layout.cameraBtnNormalColor.cgColor
             self.borderLayer.lineWidth = ZLCustomCamera.Layout.borderLayerWidth
+            self.animateLayer.speed = 1
+            self.animateLayer.timeOffset = 0
+            self.animateLayer.beginTime = 0
             self.animateLayer.removeFromSuperlayer()
             self.animateLayer.removeAllAnimations()
             self.largeCircleView.transform = .identity
@@ -1198,10 +1246,14 @@ extension ZLCustomCamera: AVCapturePhotoCaptureDelegate {
 
 extension ZLCustomCamera: AVCaptureFileOutputRecordingDelegate {
     public func fileOutput(_ output: AVCaptureFileOutput, didStartRecordingTo fileURL: URL, from connections: [AVCaptureConnection]) {
+        guard recordLongGes?.state != .possible else {
+            finishRecordAndMergeVideo()
+            return
+        }
+        
         if restartRecordAfterSwitchCamera {
             restartRecordAfterSwitchCamera = false
-            // 稍微加一个延时，否则切换摄像头后拍摄时间会略小于设置的最大值
-            ZLMainAsync(after: 0.1) {
+            ZLMainAsync {
                 let pauseTime = self.animateLayer.timeOffset
                 self.animateLayer.speed = 1
                 self.animateLayer.timeOffset = 0
@@ -1218,42 +1270,50 @@ extension ZLCustomCamera: AVCaptureFileOutputRecordingDelegate {
     
     public func fileOutput(_ output: AVCaptureFileOutput, didFinishRecordingTo outputFileURL: URL, from connections: [AVCaptureConnection], error: Error?) {
         ZLMainAsync {
+            self.recordUrls.append(outputFileURL)
+            self.recordDurations.append(output.recordedDuration.seconds)
+            
             if self.restartRecordAfterSwitchCamera {
-                self.recordUrls.append(outputFileURL)
                 self.startRecord()
                 return
             }
             
+            self.finishRecordAndMergeVideo()
+        }
+    }
+    
+    private func finishRecordAndMergeVideo() {
+        ZLMainAsync {
             self.stopRecordAnimation()
             
-            self.recordUrls.append(outputFileURL)
-            
-            var duration: Double = 0
-            if self.recordUrls.count == 1 {
-                duration = output.recordedDuration.seconds
-            } else {
-                for url in self.recordUrls {
-                    let temp = AVAsset(url: url)
-                    duration += temp.duration.seconds
-                }
+            defer {
+                self.resetSubViewStatus()
             }
+            
+            guard !self.recordUrls.isEmpty else {
+                return
+            }
+            
+            let duration = self.recordDurations.reduce(0, +)
             
             // 重置焦距
             self.setVideoZoomFactor(1)
             if duration < Double(self.cameraConfig.minRecordDuration) {
                 showAlertView(String(format: localLanguageTextValue(.minRecordTimeTips), self.cameraConfig.minRecordDuration), self)
-                self.resetSubViewStatus()
                 self.recordUrls.forEach { try? FileManager.default.removeItem(at: $0) }
                 self.recordUrls.removeAll()
+                self.recordDurations.removeAll()
                 return
             }
             
             self.session.stopRunning()
-            self.resetSubViewStatus()
             
             // 拼接视频
             if self.recordUrls.count > 1 {
+                let hud = ZLProgressHUD.show(toast: .processing)
                 ZLVideoManager.mergeVideos(fileUrls: self.recordUrls) { [weak self] url, error in
+                    hud.hide()
+                    
                     if let url = url, error == nil {
                         self?.videoUrl = url
                         self?.playRecordVideo(fileUrl: url)
@@ -1264,11 +1324,14 @@ extension ZLCustomCamera: AVCaptureFileOutputRecordingDelegate {
 
                     self?.recordUrls.forEach { try? FileManager.default.removeItem(at: $0) }
                     self?.recordUrls.removeAll()
+                    self?.recordDurations.removeAll()
                 }
             } else {
-                self.videoUrl = outputFileURL
-                self.playRecordVideo(fileUrl: outputFileURL)
+                let url = self.recordUrls[0]
+                self.videoUrl = url
+                self.playRecordVideo(fileUrl: url)
                 self.recordUrls.removeAll()
+                self.recordDurations.removeAll()
             }
         }
     }
@@ -1295,6 +1358,6 @@ extension ZLCustomCamera: UIGestureRecognizerDelegate {
                 (ges2 == otherGestureRecognizer && ges1 == gestureRecognizer)
         }.filter { $0 == true }
         
-        return result.count > 0
+        return !result.isEmpty
     }
 }
