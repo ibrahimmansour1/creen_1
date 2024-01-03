@@ -19,37 +19,39 @@ class FollowButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     log('fowwol $isFollow');
-    return InkWell(
+    return isFollow ?SizedBox():InkWell(
       onTap: onPressed,
-      child: Container(
+      child:  Container(
         // title: '',
         // function: onPressed,
         // radius: 10,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(3.r),
-          color: isFollow ? Colors.black : Colors.blue,
+          color:  Colors.red,
         ),
-        height: 26.r,
-        width: 95.r,
+
         // icon: true,
         // follow: isFollow,
         // backgroundColor:
         child: Center(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              !isFollow? Icon(Icons.add,color: Colors.white,size: 15.r,):Icon(Icons.close,color: Colors.white,size: 15.r,),
-              SizedBox(width: 3.w,),
-              Text(
-                (!isFollow ? 'follow' : 'follower').translate,
-                style: MainTheme.authTextStyle.copyWith(
-                  color: Colors.white,
-                  fontSize: 14.r,
-                  fontWeight: isFollow ? FontWeight.bold : FontWeight.normal,
+          child: Padding(
+            padding:  EdgeInsets.all(5.r),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.add,color: Colors.white,size: 15.r,),
+                SizedBox(width: 3.w,),
+                Text(
+                  ('follow').translate,
+                  style: MainTheme.authTextStyle.copyWith(
+                    color: Colors.white,
+                    fontSize: 14.r,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  //textAlign: TextAlign.start,
                 ),
-                //textAlign: TextAlign.start,
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

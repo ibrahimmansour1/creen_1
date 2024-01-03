@@ -67,11 +67,13 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(
+
     BuildContext context,
   ) {
     log('token ${HelperFunctions.currentUser?.apiToken} ${GetStorage().read<String>(storageKey + klanguage)}');
 
     // log('token ${HelperFunctions.isArabic} ');
+    print("fayeeeeeeeeeeeeeeeeeeez: ${HelperFunctions.currentUser?.apiToken}");
     return Container(
       color: Colors.white,
       child: Container(
@@ -93,7 +95,7 @@ class _HomeScreenState extends State<HomeScreen> {
             visible: HelperFunctions.isLoggedIn,
             child: Padding(
               padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
-              child: FloatingActionButton.extended(
+              child: FloatingActionButton(
                 onPressed: () {
                   if (!HelperFunctions.validateLogin()) {
                     return;
@@ -116,10 +118,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       isNamed: false);
                 },
                 backgroundColor: MainStyle.primaryColor,
-                label: const Text("انشاء منشور",style: TextStyle(
-                  color: Colors.white
-                ),),
-                icon: SvgPicture.asset("assets/images/post.svg",width: MediaQuery.of(context).size.height*.03,color: Colors.white,),
+                child: SvgPicture.asset("assets/images/post.svg",width: MediaQuery.of(context).size.height*.03,color: Colors.white,),
               ),
             ),
           ),

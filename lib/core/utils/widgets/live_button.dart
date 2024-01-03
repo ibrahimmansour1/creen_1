@@ -6,10 +6,12 @@ class LiveButton extends StatelessWidget {
   const LiveButton({
     Key? key,
     required this.backgroundColor,
+    required this.textColor,
     this.fontSize = 15,
     this.radius = 25,
   }) : super(key: key);
   final Color backgroundColor;
+  final Color textColor;
   final num radius, fontSize;
   @override
   Widget build(BuildContext context) {
@@ -19,7 +21,7 @@ class LiveButton extends StatelessWidget {
         child: OutlinedText(
           text: Text(
             'Live',
-            style: TextStyle(color: Colors.white, fontSize: fontSize.r,fontWeight: FontWeight.bold),
+            style: TextStyle(color: textColor, fontSize: fontSize.r,fontWeight: FontWeight.bold),
           ),
           // strokes: [
           //   OutlinedTextStroke(

@@ -133,7 +133,7 @@ class NavigationDrawer extends StatelessWidget {
                             icon: const LiveButton(
                               backgroundColor: Colors.red,
                               radius: 14,
-                              fontSize: 12,
+                              fontSize: 12, textColor: Colors.white,
                             ),
                             onPressed: () {
                              /* (HelperFunctions.getLiveId()).then((value){

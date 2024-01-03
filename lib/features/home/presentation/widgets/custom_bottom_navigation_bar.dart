@@ -53,11 +53,10 @@ class CustomBottomNavigationbBarState
       child: BottomNavigationBar(
           elevation: 10,
           currentIndex: widget.inx,
-          selectedItemColor: Colors.black,
-          unselectedItemColor: Colors.grey,
-          selectedLabelStyle: const TextStyle(fontSize: 10,height: 2.5,fontWeight: FontWeight.bold),
+          selectedFontSize: 0,
+          unselectedFontSize: 0,
           type: BottomNavigationBarType.fixed,
-          backgroundColor:  Colors.white,
+          backgroundColor:  widget.inx==1?Colors.transparent:Colors.white,
           onTap: (index) {
             setState(() {
               liveIndex = 0;
@@ -84,10 +83,10 @@ class CustomBottomNavigationbBarState
               // ),
               icon: SvgPicture.asset(
                 "assets/images/home.svg",
-                color: widget.inx == 0 ? Colors.black : Colors.grey[600],
-                width: MediaQuery.of(context).size.height * .035,
+                color:widget.inx == 1?Colors.white: widget.inx == 0 ? Colors.black : Colors.grey[600],
+                width: MediaQuery.of(context).size.height * .04,
               ),
-              label: 'الصفحة الرئيسية',
+              label: '',
             ),
             BottomNavigationBarItem(
               activeIcon: GestureDetector(
@@ -101,27 +100,27 @@ class CustomBottomNavigationbBarState
                 },
                 child: SvgPicture.asset(
                     "assets/images/video_add.svg",
-                    color: Colors.blue,
-                    width: MediaQuery.of(context).size.height * .035,
+                    color: Colors.white,
+                    width: MediaQuery.of(context).size.height * .04,
                   ),
               ),
 
               icon: SvgPicture.asset(
                 "assets/images/video.svg",
-                color: widget.inx == 1 ? Colors.black : Colors.grey[600],
-                width: MediaQuery.of(context).size.height * .035,
+                color: Colors.grey[600],
+                width: MediaQuery.of(context).size.height * .04,
               ),
-              label: 'الفيديو',
+              label: '',
             ),
             BottomNavigationBarItem(
               activeIcon: LiveButton(
                 backgroundColor: Colors.red,
-                radius: 14.r,
+                radius: 14.r, textColor: Colors.white,
               ),
               icon: LiveButton(
-                backgroundColor: Colors.grey[600]!,
-                radius: 12.r,
-                fontSize: 10,
+                backgroundColor:widget.inx == 1?Colors.white:Colors.grey[600]!,
+                radius: 15.r,
+                fontSize: 10, textColor: widget.inx == 1?Colors.black:Colors.white,
               ),
               // icon: Image.asset(
               //   ('assets/images/khater.png'),
@@ -129,24 +128,29 @@ class CustomBottomNavigationbBarState
               //   height: 45.r,
               //   width: 45.r,
               // ),
-              label: 'البث المباشر',
+              label: '',
             ),
             BottomNavigationBarItem(
               icon: SvgPicture.asset(
                 "assets/images/bag.svg",
-                color: widget.inx == 3 ? Colors.black : Colors.grey[600],
-                width: MediaQuery.of(context).size.height * .035,
+                color: widget.inx == 1?Colors.white:widget.inx == 3 ? Colors.black : Colors.grey[600],
+                width: MediaQuery.of(context).size.height * .04,
               ),
               // icon: ImageIcon(AssetImage('assets/images/market.png')),
-              label: 'الخدمات',
+              label: '',
             ),
             BottomNavigationBarItem(
-              icon: SvgPicture.asset(
-                "assets/images/Profile.svg",
-                color: widget.inx == 4 ? Colors.black : Colors.grey[600],
-                width: MediaQuery.of(context).size.height * .035,
-              ),
-              label: 'الملف الشخصي',
+              icon:  /*((HelperFunctions.currentUser?.profile == null)
+                  ?
+              // const ImageIcon(AssetImage(personProfile))
+                  :*/CircleAvatar(
+                radius: 15.r,
+                backgroundImage: (HelperFunctions.currentUser?.profile == null)
+                    ?
+                // const ImageIcon(AssetImage(personProfile))
+                const AssetImage(personProfile):NetworkImage(HelperFunctions.currentUser?.profile)as ImageProvider<Object>,backgroundColor: Colors.transparent,) ,
+              // icon: ImageIcon(AssetImage('assets/images/profile.png')),
+              label: '',
             ),
           ]),
     );

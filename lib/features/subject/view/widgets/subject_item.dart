@@ -561,26 +561,6 @@ class _SubjectItemState extends State<SubjectItem> {
                   children: [
                     Row(
                       children: [
-                        SvgPicture.asset(
-                          "assets/images/red_heart.svg",
-                          width: MediaQuery.of(context).size.height * .03,
-                        ),
-                        SizedBox(
-                          width: 5.w,
-                        ),
-                        widget.isLike
-                            ? Text(
-                                "انت و ${int.parse(widget.likeCount!) - 1} أخرون ")
-                            : Text(
-                                "${widget.likeCount}",
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.bold),
-                              ),
-                      ],
-                    ),
-                    const Spacer(),
-                    Row(
-                      children: [
                         Row(
                           children: [
                             Row(
@@ -607,83 +587,27 @@ class _SubjectItemState extends State<SubjectItem> {
                             )
                           ],
                         ),
-                        if (retweets?.isNotEmpty == true) ...[
-                          Padding(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 25.r,
-                              vertical: 10.r,
-                            ),
-                            child: BoxHelper(
-                              width: 30,
-                              child: Stack(
-                                clipBehavior: Clip.none,
-                                children: [
-                                  retweets?[0].user?.profile == null
-                                      ? const CircleAvatar(
-                                          backgroundImage: AssetImage(
-                                              'assets/images/person_perview.png'),
-                                        )
-                                      : CircleRetweetImage(
-                                          image: retweets?[0].user?.profile,
-                                        ),
-                                  (retweets?.length ?? 0) >= 2
-                                      ? (retweets?[1].user?.profile == null
-                                          ? const CircleAvatar(
-                                              backgroundImage: AssetImage(
-                                                  'assets/images/person_perview.png'),
-                                            )
-                                          : Positioned(
-                                              left: -14.r,
-                                              child: CircleRetweetImage(
-                                                image: retweets?[1]
-                                                        .user
-                                                        ?.profile ??
-                                                    '',
-                                              ),
-                                            ))
-                                      : const BoxHelper(),
-                                  (retweets?.length ?? 0) >= 3
-                                      ? (retweets?[2].user?.profile == null
-                                          ? const CircleAvatar(
-                                              backgroundImage: AssetImage(
-                                                  'assets/images/person_perview.png'),
-                                            )
-                                          : Positioned(
-                                              left: -25.r,
-                                              child: CircleRetweetImage(
-                                                image: retweets?[2]
-                                                        .user
-                                                        ?.profile ??
-                                                    '',
-                                              ),
-                                            ))
-                                      : const BoxHelper(),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
                       ],
                     ),
-                    SizedBox(
-                      width: 10.w,
-                    ),
+                    const Spacer(),
                     Row(
                       children: [
-                        SvgPicture.asset(
-                          "assets/images/chat.svg",
-                          width: MediaQuery.of(context).size.height * .03,
-                          color: Colors.grey[600],
+                         const Text(
+                          "${122}",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold),
                         ),
                         SizedBox(
                           width: 5.w,
                         ),
-                        Text(
-                          "${widget.blogs?.comments?.length}",
-                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        Image.asset(
+                          "assets/images/gift.png",
+                          width: MediaQuery.of(context).size.height * .03,
                         ),
+
                       ],
                     ),
+
                   ],
                 ),
               ),
@@ -725,9 +649,12 @@ class _SubjectItemState extends State<SubjectItem> {
                                         widget.isLike ? null : Colors.grey[600],
                                   ),
                                   SizedBox(
-                                    height: 3.h,
+                                    height: 5.h,
                                   ),
-                                  Text("أعجبني")
+                                  Text(
+                                    "${widget.blogs?.likesCount}",
+                                    style:  TextStyle(fontWeight: FontWeight.bold,color: Colors.grey[600],),
+                                  ),
                                 ],
                               ),
                             ),
@@ -745,9 +672,12 @@ class _SubjectItemState extends State<SubjectItem> {
                                     color: Colors.grey[600],
                                   ),
                                   SizedBox(
-                                    height: 3.h,
+                                    height: 5.h,
                                   ),
-                                  Text("تعليق")
+                                  Text(
+                                    "${widget.blogs?.commentsCount}",
+                                    style:  TextStyle(fontWeight: FontWeight.bold,color: Colors.grey[600],),
+                                  ),
                                 ],
                               ),
                               onTap: () {
@@ -826,9 +756,12 @@ class _SubjectItemState extends State<SubjectItem> {
                                         color: Colors.grey[600],
                                       ),
                                       SizedBox(
-                                        height: 3.h,
+                                        height: 5.h,
                                       ),
-                                      Text("مشاركة")
+                                      Text(
+                                        "${100}",
+                                        style:  TextStyle(fontWeight: FontWeight.bold,color: Colors.grey[600],),
+                                      ),
                                     ],
                                   ),
                                 ),
@@ -873,9 +806,12 @@ class _SubjectItemState extends State<SubjectItem> {
                                             : Colors.grey[600],
                                       ),
                                       SizedBox(
-                                        height: 3.h,
+                                        height: 5.h,
                                       ),
-                                      Text("اعادة النشر")
+                                      Text(
+                                        "${widget.blogs?.retweetsCount}",
+                                        style:  TextStyle(fontWeight: FontWeight.bold,color: Colors.grey[600],),
+                                      ),
                                     ],
                                   ),
                                 ),
@@ -912,9 +848,12 @@ class _SubjectItemState extends State<SubjectItem> {
                                         color: Colors.grey[600],
                                       ),
                                       SizedBox(
-                                        height: 3.h,
+                                        height: 5.h,
                                       ),
-                                      Text("المحادثات")
+                                      Text(
+                                        "${100}",
+                                        style:  TextStyle(fontWeight: FontWeight.bold,color: Colors.grey[600],),
+                                      ),
                                     ],
                                   ),
                                 ),

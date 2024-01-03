@@ -98,7 +98,7 @@ dependencies:
   google_mobile_ads: ^2.3.0
   whatsapp_camera:
     git: https://github.com/AbdullahGaber/whatsapp_camera.git
-  awesome_dialog: ^3.0.2
+  awesome_dialog:
   url_launcher: ^6.1.10
   photo_manager: ^3.0.0-dev.1
   intl: ^0.18.0

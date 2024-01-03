@@ -320,15 +320,18 @@ storyDuration = storiesCubit.stories[0].story?[0].video !=null ? 30 :7;
                                 color: Colors.white,
                               );
                             }
-                            return FollowButton(
-                              isFollow: user.isFollow!,
-                              onPressed: () {
-                                context.read<FollowCubit>().follow(
-                                      context,
-                                      userId: user.id,
-                                      isFollow: user.isFollow!,
-                                    );
-                              },
+                            return SizedBox(
+                              height: 25.h,
+                              child: FollowButton(
+                                isFollow: user.isFollow!,
+                                onPressed: () {
+                                  context.read<FollowCubit>().follow(
+                                        context,
+                                        userId: user.id,
+                                        isFollow: user.isFollow!,
+                                      );
+                                },
+                              ),
                             );
                           },
                         ),

@@ -1,5 +1,6 @@
 // ignore_for_file: deprecated_member_use
 
+import 'package:creen/core/utils/extensions/num_extensions.dart';
 import 'package:creen/core/utils/extensions/string.dart';
 import 'package:creen/core/utils/widgets/custom_option_dialog.dart';
 import 'package:creen/features/follow/viewModel/following/following_cubit.dart';
@@ -115,6 +116,8 @@ class MainPage extends ConsumerWidget {
             ? const SizedBox()
             : BottomAppBar(
                padding: EdgeInsets.zero,
+                color:  Colors.transparent,
+                height: 60,
                 child: CustomBottomNavigationbBar(
                   onTap: (v) {
                     ref.read(_bottomNavIndexProvider.state).state = v;
@@ -148,6 +151,7 @@ class MainPage extends ConsumerWidget {
             ? const SizedBox()
             : BottomAppBar(
                 padding: EdgeInsets.zero,
+                height: 60,
                 child: CustomBottomNavigationbBar(
                   onTap: (v) {
                     ref.read(_bottomNavIndexProvider.state).state = v;
