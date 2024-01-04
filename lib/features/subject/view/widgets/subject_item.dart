@@ -20,6 +20,7 @@ import 'package:creen/features/profile/presentaion/pages/my_profile.dart';
 import 'package:creen/features/profile/viewModel/profile/profile_cubit.dart';
 import 'package:creen/features/subject/view/pages/add_subject.dart';
 import 'package:creen/features/subject/view/pages/comments_screen.dart';
+import 'package:creen/features/subject/view/widgets/trainer_widget.dart';
 import 'package:creen/features/subject/view/widgets/youtube_widget.dart';
 import 'package:creen/features/subject/viewModel/addCommentToPost/add_comment_to_post_cubit.dart';
 import 'package:creen/features/subject/viewModel/blogDetails/blog_details_cubit.dart';
@@ -106,6 +107,10 @@ class _SubjectItemState extends State<SubjectItem> {
     // print("retweets?[0].user?.profile ${retweets?[0].user?.profile}");
     return Column(
       children: [
+        Visibility(
+          visible: widget.showAd,
+          child:const TrainerWidget(),
+        ),
         Container(
           margin: EdgeInsets.symmetric(vertical: 5, horizontal: 0.r),
           // padding: EdgeInsets.all(10),
@@ -873,6 +878,7 @@ class _SubjectItemState extends State<SubjectItem> {
           visible: widget.showAd,
           child: BannerAdWidget(),
         ),
+
       ],
     );
   }
