@@ -490,15 +490,19 @@ class FollowerUserItem extends StatelessWidget {
             if (state is FollowLoading) {
               return const LoaderWidget();
             }
-            return FollowButton(
-                onPressed: () {
-                  context.read<FollowCubit>().follow(
-                        context,
-                        userId: user.id,
-                        isFollow: user.isFollow ?? false,
-                      );
-                },
-                isFollow: user.isFollow ?? false);
+            return user.isFollow! ? const SizedBox():SizedBox(
+              width: MediaQuery.of(context).size.width*.2,
+              height: MediaQuery.of(context).size.height*.05,
+              child: FollowButton(
+                  onPressed: () {
+                    context.read<FollowCubit>().follow(
+                          context,
+                          userId: user.id,
+                          isFollow: user.isFollow ?? false,
+                        );
+                  },
+                  isFollow: user.isFollow ?? false),
+            );
           },
         ),
       ),

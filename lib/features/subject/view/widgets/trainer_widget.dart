@@ -1,10 +1,6 @@
-import 'package:creen/core/utils/extensions/num_extensions.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:creen/features/subject/view/pages/trainer_details.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/painting.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import 'package:flutter_svg/svg.dart';
 
 class TrainerWidget extends StatelessWidget {
   const TrainerWidget({super.key});
@@ -31,11 +27,6 @@ class TrainerWidget extends StatelessWidget {
               itemBuilder: (context, index) {
                 return Row(
                   children: [
-                    index == 0
-                        ? const SizedBox(
-                            width: 10,
-                          )
-                        : const SizedBox(),
                     Container(
                       width: MediaQuery.of(context).size.width * .4,
                       decoration: BoxDecoration(
@@ -129,15 +120,20 @@ class TrainerWidget extends StatelessWidget {
                                   decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(30),
                                       border: Border.all(color: Colors.blue)),
-                                  child: const Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Padding(
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 30, vertical: 5.0),
-                                        child: Text("شاهد"),
-                                      ),
-                                    ],
+                                  child: GestureDetector(
+                                    onTap: (){
+                                      Navigator.push(context, MaterialPageRoute(builder: (context)=>const TrainerDescription()));
+                                    },
+                                    child: const Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Padding(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 10, vertical: 5.0),
+                                          child: Text("شاهد"),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),

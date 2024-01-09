@@ -874,10 +874,10 @@ class _SubjectItemState extends State<SubjectItem> {
             ],
           ),
         ),
-        Visibility(
-          visible: widget.showAd,
-          child: BannerAdWidget(),
-        ),
+        // Visibility(
+        //   visible: widget.showAd,
+        //   child: BannerAdWidget(),
+        // ),
 
       ],
     );

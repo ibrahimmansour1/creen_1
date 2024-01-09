@@ -39,13 +39,7 @@ class _AddSubjectScreenState extends State<AddSubjectScreen> {
     // String value1 = ref.watch(valueProvider1);
 
     return Scaffold(
-      appBar: PreferredSize(
-          preferredSize: Size.fromHeight(Sizes.screenHeight() * 0.08),
-          child: CustomAppBar(
-            back: true,
-            // title: 'إضافة موضوع جديد',
-            title: 'add_new_blog'.translate,
-          )),
+
       body: Container(
         decoration: const BoxDecoration(
             gradient: LinearGradient(
@@ -62,9 +56,21 @@ class _AddSubjectScreenState extends State<AddSubjectScreen> {
           child: ListView(
             children: [
               Column(
+
                 children: [
                   SizedBox(
-                    height: Sizes.screenWidth() * 0.15,
+                    height: Sizes.screenWidth() * 0.05,
+                  ),
+                  Row(children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: InkWell(onTap: (){
+                        Navigator.pop(context);
+                      },child: const Icon(Icons.arrow_back_ios_new_outlined)),
+                    ),
+                  ],),
+                  SizedBox(
+                    height: Sizes.screenWidth() * 0.05,
                   ),
                   BlocBuilder<CategoriesCubit, CategoriesState>(
                     builder: (context, state) {
