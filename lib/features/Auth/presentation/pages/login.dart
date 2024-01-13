@@ -272,16 +272,16 @@ class _LoginScreenState extends State<LoginScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       /*sign in with apple account*/
-                      if(Platform.isIOS)
-                      customCirecleAvatar(
-                          icon: "assets/images/apple_icon.png",
-                          isApple: true,
-                          onPress: () async {
-                           await appleSignIn();
-                            // print("google");
-                            // await _handleSignIn();
-                            // await googleSignIn();
-                          }),
+                      if (Platform.isIOS)
+                        customCirecleAvatar(
+                            icon: "assets/images/apple_icon.png",
+                            isApple: true,
+                            onPress: () async {
+                              await appleSignIn();
+                              // print("google");
+                              // await _handleSignIn();
+                              // await googleSignIn();
+                            }),
                       customCirecleAvatar(
                           icon: "assets/images/google_icon.png",
                           onPress: () async {
@@ -297,15 +297,15 @@ class _LoginScreenState extends State<LoginScreen> {
                             }
                             facebookSignIn();
                           }),
-                      customCirecleAvatar(
-                          icon: "assets/images/x.jpeg",
-                          isApple: true,
-                          onPress: () async {
-                            if (kDebugMode) {
-                              print("twitter");
-                            }
-                            await twitterSignIn();
-                          }),
+                      // customCirecleAvatar(
+                      //     icon: "assets/images/x.jpeg",
+                      //     isApple: true,
+                      //     onPress: () async {
+                      //       if (kDebugMode) {
+                      //         print("twitter");
+                      //       }
+                      //       await twitterSignIn();
+                      //     }),
                       customCirecleAvatar(
                           icon: "assets/images/wechat.png",
                           onPress: () {
@@ -323,7 +323,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     children: [
                       InkWell(
                         onTap: () {
-                         Navigator.pushNamed(context,RoutePaths.forgetPassword );
+                          Navigator.pushNamed(
+                              context, RoutePaths.forgetPassword);
                         },
                         child: Text(
                           'forget_password'.translate,
@@ -390,7 +391,6 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ],
                   ),
-
                 ],
               ),
             ),
@@ -415,24 +415,22 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Future<void> _handleSignIn() async {
     try {
-      await googleSignInObject
-          .signIn()
-          .then((auth) {
-            log('Google Sign In Successfully $auth');
-            loginCubit.accountType = Account.google.name;
+      await googleSignInObject.signIn().then((auth) {
+        log('Google Sign In Successfully $auth');
+        loginCubit.accountType = Account.google.name;
 
-            HelperFunctions.account(loginCubit.accountType).then((value) {
-              SocialLoginRepo.socialLogin(email: auth!.email, name: auth?.displayName,cover: auth.photoUrl);
+        HelperFunctions.account(loginCubit.accountType).then((value) {
+          SocialLoginRepo.socialLogin(
+              email: auth!.email, name: auth.displayName, cover: auth.photoUrl);
 
-              NavigationService.pushAndRemoveUntil(
-                page: RoutePaths.mainPage,
-                isNamed: true,
-                predicate: (p0) => false,
-              );
-            loginCubit.emit(LoginDone());
-            });
-
-          });
+          NavigationService.pushAndRemoveUntil(
+            page: RoutePaths.mainPage,
+            isNamed: true,
+            predicate: (p0) => false,
+          );
+          loginCubit.emit(LoginDone());
+        });
+      });
     } catch (error) {
       log('Google Sign In Process Error ${error.toString()} ',
           name: 'Login View');
@@ -448,7 +446,8 @@ class _LoginScreenState extends State<LoginScreen> {
     ).then((value) {
       final credential = value;
       loginCubit.accountType = Account.apple.name;
-      SocialLoginRepo.socialLogin(email: credential!.email!, name: credential?.givenName);
+      SocialLoginRepo.socialLogin(
+          email: credential.email!, name: credential.givenName);
 
       HelperFunctions.account(loginCubit.accountType).then((value) => log(''));
 
@@ -472,74 +471,70 @@ class _LoginScreenState extends State<LoginScreen> {
 
     // Once signed in, return the UserCredential
      FirebaseAuth.instance.signInWithCredential(facebookAuthCredential);*/
-   /* final LoginResult result = await FacebookAuth.instance.login(); // by default we request the email and the public profile
+    /* final LoginResult result = await FacebookAuth.instance.login(); // by default we request the email and the public profile
 // or FacebookAuth.i.login()
     if (result.status == LoginStatus.success) {
       // you are logged
       final AccessToken accessToken = result.accessToken!;
       log('Apple Sign In Process $accessToken');*/
-      /*final AccessToken? accessToken = await FacebookAuth.instance.accessToken;
+    /*final AccessToken? accessToken = await FacebookAuth.instance.accessToken;
 // or FacebookAuth.i.accessToken
       if (accessToken != null) {
         // user is logged
       }*/
 
-      /*await FacebookAuth.instance.logOut();
+    /*await FacebookAuth.instance.logOut();
 // or FacebookAuth.i.logOut();*/
 
-  /*  } else {
+    /*  } else {
       log('Apple Sign In Error\n result status ${result.status}\n result message ${result.message}');
 
     }*/
-
-
   }
 
-  Future<void> twitterSignIn() async {
+  // Future<void> twitterSignIn() async {
 
-    TwitterAuthProvider twitterProvider = TwitterAuthProvider();
-    await FirebaseAuth.instance.signInWithProvider(twitterProvider).then((value) {
-      SocialLoginRepo.socialLogin(email: value!.user!.email!, name:  value!.user?.displayName,cover:  value!.user!.photoURL);
+  //   TwitterAuthProvider twitterProvider = TwitterAuthProvider();
+  //   await FirebaseAuth.instance.signInWithProvider(twitterProvider).then((value) {
+  //     SocialLoginRepo.socialLogin(email: value!.user!.email!, name:  value!.user?.displayName,cover:  value!.user!.photoURL);
 
-      log('twitter login successful $value');
-      loginCubit.accountType = Account.x.name;
-      HelperFunctions.account(loginCubit.accountType).then((value) => log(''));
+  //     log('twitter login successful $value');
+  //     loginCubit.accountType = Account.x.name;
+  //     HelperFunctions.account(loginCubit.accountType).then((value) => log(''));
 
-    }).catchError((error)=>log('twitter login error ${error.toString()}'));
-   /* final twitter =  TwitterLogin(apiKey: "bKyqUCiMWO2WJASPfNt9PJOKC", apiSecretKey: "nK1jnRFj86jA8j8ofKyVFqE0Bd1BNHcmhhdOefW3fZvgG8RFW6", redirectURI: "https://creen-d9403.firebaseapp.com/__/auth/handler");
-    // final twitter =  TwitterLogin(apiKey: "3UjokNGr2WDbrHp40XclLX6Yj", apiSecretKey: "jwqHCYybkgAX4Pf6GUYrP3ZAIJoaKcSM76qkfwNJ7akNkDR8bk", redirectURI: "https://creen-d9403.firebaseapp.com/__/auth/handler");
-    //     final twitter =  TwitterLogin(apiKey: "3UjokNGr2WDbrHp40XclLX6Yj", apiSecretKey: "jwqHCYybkgAX4Pf6GUYrP3ZAIJoaKcSM76qkfwNJ7akNkDR8bk", redirectURI: "creen://");
-    AuthResult authResult ;
-    await twitter.login().then((value) async{
-        authResult = value;
-        log('Twitter Login process successed $authResult\n Login status ${authResult.status}\n Error Message ${authResult.errorMessage}\n Login auth ${authResult.authToken}');
-      }).catchError((error)=>log('Twitter Login process failed ${error.toString()}'));
-   */ /*  switch (authResult._st) {
-        case TwitterLoginStatus.loggedIn:
-        // success
-          break;
-        case TwitterLoginStatus.cancelledByUser:
-        // cancel
-          break;
-        case TwitterLoginStatus.error:
-        // error
-          break;
-      }*/
+  //   }).catchError((error)=>log('twitter login error ${error.toString()}'));
+  //  /* final twitter =  TwitterLogin(apiKey: "bKyqUCiMWO2WJASPfNt9PJOKC", apiSecretKey: "nK1jnRFj86jA8j8ofKyVFqE0Bd1BNHcmhhdOefW3fZvgG8RFW6", redirectURI: "https://creen-d9403.firebaseapp.com/__/auth/handler");
+  //   // final twitter =  TwitterLogin(apiKey: "3UjokNGr2WDbrHp40XclLX6Yj", apiSecretKey: "jwqHCYybkgAX4Pf6GUYrP3ZAIJoaKcSM76qkfwNJ7akNkDR8bk", redirectURI: "https://creen-d9403.firebaseapp.com/__/auth/handler");
+  //   //     final twitter =  TwitterLogin(apiKey: "3UjokNGr2WDbrHp40XclLX6Yj", apiSecretKey: "jwqHCYybkgAX4Pf6GUYrP3ZAIJoaKcSM76qkfwNJ7akNkDR8bk", redirectURI: "creen://");
+  //   AuthResult authResult ;
+  //   await twitter.login().then((value) async{
+  //       authResult = value;
+  //       log('Twitter Login process successed $authResult\n Login status ${authResult.status}\n Error Message ${authResult.errorMessage}\n Login auth ${authResult.authToken}');
+  //     }).catchError((error)=>log('Twitter Login process failed ${error.toString()}'));
+  //  */ /*  switch (authResult._st) {
+  //       case TwitterLoginStatus.loggedIn:
+  //       // success
+  //         break;
+  //       case TwitterLoginStatus.cancelledByUser:
+  //       // cancel
+  //         break;
+  //       case TwitterLoginStatus.error:
+  //       // error
+  //         break;
+  //     }*/
 
-  }
-
-
+  // }
 }
 
-Future<void> twitterLogin() async {
-  /*
-  final twitter =  TwitterLogin(apiKey: "3UjokNGr2WDbrHp40XclLX6Yj", apiSecretKey: "jwqHCYybkgAX4Pf6GUYrP3ZAIJoaKcSM76qkfwNJ7akNkDR8bk", redirectURI: "https://creen-d9403.firebaseapp.com/__/auth/handler");
-await twitter.login().then((value) async{
-  print("twitter value:- $value");
-  final twitterAuth = TwitterAuthProvider.credential(accessToken: value.authToken!, secret: value.authTokenSecret!);
-  await FirebaseAuth.instance.signInWithCredential(twitterAuth);
-});*/
-}
+// Future<void> twitterLogin() async {
+//   /*
+//   final twitter =  TwitterLogin(apiKey: "3UjokNGr2WDbrHp40XclLX6Yj", apiSecretKey: "jwqHCYybkgAX4Pf6GUYrP3ZAIJoaKcSM76qkfwNJ7akNkDR8bk", redirectURI: "https://creen-d9403.firebaseapp.com/__/auth/handler");
+// await twitter.login().then((value) async{
+//   print("twitter value:- $value");
+//   final twitterAuth = TwitterAuthProvider.credential(accessToken: value.authToken!, secret: value.authTokenSecret!);
+//   await FirebaseAuth.instance.signInWithCredential(twitterAuth);
+// });*/
+// }
 
 Widget customCirecleAvatar(
         {required String icon,
