@@ -219,7 +219,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                               'wallet',
                               () {
                                 NavigationService.push(
-                                  page: RoutePaths.myWallets,
+                                  page: RoutePaths.fWallet,
                                   isNamed: true,
                                 );
                               },

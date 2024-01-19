@@ -14,6 +14,7 @@ class RoutePaths {
   static const myBlogs = '/myBlogs';
   static const blogDetails = '/blogs/details';
   static const myWallets = '/myWallets';
+  static const fWallet = '/fWallet';
   static const cart = '/myCart';
   static const cartDetails = '/cartDetails';
   static const bmiTabs = '/bmiTabs';

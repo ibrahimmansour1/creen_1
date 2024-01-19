@@ -38,6 +38,7 @@ import '../../../features/addressData/viewModel/addressData/address_data_cubit.d
 import '../../../features/ads/view/pages/ad_details_screen.dart';
 import '../../../features/ads/view/pages/general_ad.dart';
 import '../../../features/ads/viewModel/viewPromotion/view_promotion_cubit.dart';
+import '../../../features/f_wallet/presentation/views/account_screen.dart';
 import 'navigation_transitions.dart';
 
 class AppRouter {
@@ -189,6 +190,10 @@ class AppRouter {
             ],
             child: const WalletScreen(),
           ),
+          settings: settings,
+        ); case RoutePaths.fWallet:
+        return MaterialPageRoute(
+          builder: (_) => const AccountScreen(),
           settings: settings,
         );
       case RoutePaths.liveAttendance:

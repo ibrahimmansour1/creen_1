@@ -45,6 +45,11 @@ const double locationArriveDistance = 200.0; //i
 const int locationChangeInterval = 5000; //in milliseconds
 const double locationChangeDistance = 5.0; //in meters
 const Color liveBackground = Color(0xff0e2b33);
+bool timerSwitch1=true;
+bool timerSwitch2=false;
+List<bool>stateColors=[false,false,false,false,false,false,false,false];
+
+String selectedLang="ar";
 
 const appId = "8c21927ba87c4047a78428178283e345";
 String channelName = "test";
